@@ -1,0 +1,16 @@
+{
+  "name": "smart_home_calculator",
+  "description": "Web application that will calculate aproximate price of smart devices.",
+  "main": "Program.cs",
+  "keywords": [
+    "Blazor",
+    "SmartHome"
+  ],
+  "authors": [
+    "Jiri Horacek"
+  ],
+  "license": "MIT",
+  "dependencies": {
+    "bootstrap": "v4.6.0"
+  }
+}

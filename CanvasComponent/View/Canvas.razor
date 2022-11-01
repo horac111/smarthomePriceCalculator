@@ -1,0 +1,77 @@
+﻿@using CanvasComponent.Abstract
+@using CanvasComponent.ViewModel
+@inject IJSRuntime js
+
+<div class="container h-100 w-100 mw-100 mh-100">
+    <div class="row justify-content-start h-100 w-100">
+        <div id="CanvasContainer" class="col-11" dropzone="move" ondragover="event.preventDefault()">
+            <Excubo.Blazor.Canvas.Canvas width="@(viewModel.DrawingHelper?.Width ?? 0)"
+                                         height="@(viewModel.DrawingHelper?.Height ?? 0)"
+                                         @onmousemove="@viewModel.OnMouseMove" @onmousedown="@viewModel.OnMouseDown"
+                                         @ondrop="@(e => viewModel.OnDragDrop(e, "CanvasContainer"))"
+                                         @ref="viewModel.Canvas" draggable="false" @onkeydown="@viewModel.OnKeyDown" />
+        </div>
+
+        <div dropzone="move" class="justify-content-center align-content-center col-1">
+            <div class="mx-auto">
+                @foreach (var device in viewModel.Devices)
+                {
+                    <img src="@device.Icon" height="32" width="32" draggable="true"
+                     @ondragstart="@(e => viewModel.OnDragStart(device, "CanvasContainer"))" />
+                    <img id="@("img" + device.Id)" height="32" width="32" style="display:none" src="@device.Icon" />
+                }
+            </div>
+        </div>
+    </div>
+    <footer class="row justify-content-center">
+        <div class="col-3">
+            <label>Price:</label> <label>@viewModel.TotalPrice</label>
+        </div>
+    </footer>
+</div>
+
+
+
+@code {
+    [Parameter]
+    public ICanvasViewModel viewModel { get; init; }
+
+    [CascadingParameter] 
+    public IModalService Modal { get; set; }
+
+    protected override void OnInitialized()
+    {
+        viewModel.PropertyChanged += (s, e) => InvokeAsync(StateHasChanged);
+        viewModel.NewRoom += async (s, e) =>
+        {
+            await InvokeAsync(async () =>
+            {
+                try
+                {
+                    ModalParameters param = new();
+                    param.Add(nameof(InputText.room), e.Room);
+                    var modal = Modal.Show<InputText>("Naming room.", param, new() { Position = ModalPosition.BottomLeft, DisableBackgroundCancel = false });
+                    var result = await modal.Result;
+                }
+                catch (Exception ex)
+                {
+                    ;
+                }
+            });
+            
+            
+        };
+        base.OnInitialized();
+    }
+    protected override async void OnAfterRender(bool firstRender)
+    {
+        if(firstRender)
+        {
+            var rect = await js.InvokeAsync<BoundingClientRect>("eval", 
+               $"let e = document.querySelector(\"#CanvasContainer\"); e = e.getBoundingClientRect();  e");
+            viewModel.DrawingHelper = new DrawingHelper(rect);
+        }
+        await viewModel.OnAfterRender(firstRender);
+        base.OnAfterRender(firstRender);
+    }
+}

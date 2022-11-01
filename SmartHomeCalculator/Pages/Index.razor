@@ -1,0 +1,74 @@
+﻿@page "/"
+@using Blazored.Modal.Services
+@using CanvasComponent.Abstract
+@using CanvasComponent.View
+@inject ICanvasViewModel viewModel
+
+
+<div class="wrapper">
+    <button @onclick="() => show_sidebar ^= true" class="btn btn-primary chevron">
+        <i class="fa fa-chevron-circle-@(show_sidebar ? "left" : "right")"> <!-- <img src="@("data:image/png;base64," + Convert.ToBase64String(System.IO.File.ReadAllBytes("C:\\Users\\horac\\Downloads\\menu.png")))" width="16" height="16"  />--></i>
+    </button>
+
+    <aside class="sidebar sidebar-@(show_sidebar ? "show" : "hide")">
+        <div class="sidebar-content mt-5">
+            <EditForm Model="viewModel">
+                <div class="row h-auto ">
+                    <InputRadioGroup TValue="int" Name="drawingStyle" @bind-Value="viewModel.SelectedStyle">
+                        @foreach (var val in viewModel.DrawingTypes)
+                        {
+                            <div class="align-items-center ml-1 mr-1">
+                                <InputRadio @key="@val.Value" Value="@val.Value" Name="drawingStyle" /> <label class="ml-1">@val.Name</label>
+                            </div>
+                        }
+                    </InputRadioGroup>
+                </div>
+                <div class="row h-auto align-items-center">
+                    <label class="ml-1 mb-0 mt-1">Grid density: </label>
+                    <input type="number" @bind-value="@viewModel.GridSize" class="form-control form-control-sm" />
+                </div>
+                <div class="row h-auto align-items-center mt-1">
+                    <input type="checkbox" @bind="@viewModel.ShowGrid" class="mb-2" />  <label class="ml-1">Is grid visible </label>
+                </div>
+                <div class="row h-auto align-items-center mt-1">
+                    <input type="checkbox" @bind="@viewModel.SnapToGrid" class="mb-2" />  <label class="ml-1">Snap to grid </label>
+                </div>
+                <div class="row h-auto align-items-center">
+                    <label class="ml-1 mb-0 mt-1">Pixels to close room:</label>
+                    <input type="number" @bind-value="@viewModel.AutoComplete" class="form-control form-control-sm" />
+                </div>
+                <div class="row h-auto align-items-center">
+                    <label class="ml-1 mb-0 mt-1">Line thickness:</label>
+                    <input type="number" @bind-value="@viewModel.Thickness" class="form-control form-control-sm" />
+                </div>
+            </EditForm>
+        </div>
+    </aside>
+
+
+    <div class="content">
+        <div class="container-flux h-100">
+            <div class="row m-0 h-100 border border-danger">
+                <Canvas viewModel="@viewModel" />
+            </div>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+@code
+{
+    bool show_sidebar = true;
+
+    
+
+    protected override void OnInitialized()
+    {
+        viewModel.PropertyChanged += (s, e) => InvokeAsync(StateHasChanged);
+        base.OnInitialized();
+    }
+}
+

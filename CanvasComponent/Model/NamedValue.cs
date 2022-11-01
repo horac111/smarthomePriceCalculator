@@ -1,0 +1,37 @@
+﻿using CanvasComponent.Abstract;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace CanvasComponent.Model
+{
+    internal class NamedValue<T> : INamedValued<T>, IEquatable<T>, IEquatable<NamedValue<T>> where T : struct
+    {
+        public NamedValue() { }
+
+        public NamedValue(string name, T value)
+        {
+            Name = name;
+            Value = value;
+        }
+
+        public string Name { get; set; }
+
+        public T Value { get; init; }
+
+        public bool Equals(T other) => other.Equals(Value);
+
+        public new bool Equals(object obj) => this.Equals(obj as NamedValue<T>);
+
+        public bool Equals(NamedValue<T> other) => Value.Equals(other?.Value);
+
+        public override int GetHashCode()
+        {
+            return Value.GetHashCode();
+        }
+
+        
+    }
+}
