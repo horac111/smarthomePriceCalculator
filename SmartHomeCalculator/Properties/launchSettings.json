@@ -15,7 +15,7 @@
         "ASPNETCORE_ENVIRONMENT": "Development"
       }
     },
-    "SmartHomeCalculator2": {
+    "SmartHomeCalculator": {
       "commandName": "Project",
       "dotnetRunMessages": "true",
       "launchBrowser": true,

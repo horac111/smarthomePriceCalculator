@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
-namespace SmartHomeCalculator2
+namespace SmartHomeCalculator
 {
     public class Program
     {
