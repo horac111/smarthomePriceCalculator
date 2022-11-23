@@ -1,4 +1,5 @@
 ﻿using CanvasComponent.Abstract;
+using CanvasComponent.Drawing;
 using CanvasComponent.EventArguments;
 using CanvasComponent.Extensions;
 using CanvasComponent.Model;
@@ -19,37 +20,39 @@ namespace CanvasComponent.ViewModel
 {
     public class CanvasViewModel : NotifyPropertyChanged, IDisposable, ICanvasViewModel
     {
-        private DrawByStyle drawing = new();
+        private DrawByStyleBase drawByStyle;
 
-        private RoomsCreator roomsCreator = new();
+        private RoomsCreatorBase roomsCreator;
+
+        private SemaphoreSlim drawing = new(1, 1);
 
         public IDrawingHelper DrawingHelper { get; set; }
 
         public int SelectedStyle
         {
-            get => drawing.SelectedDrawingStyle;
-            set => ChangeAndRaise(x => x.SelectedDrawingStyle, drawing, value);
+            get => drawByStyle.SelectedDrawingStyle;
+            set => drawByStyle.SelectedDrawingStyle = value;
         }
         public double GridSize
         {
-            get => drawing.GridSize;
-            set => ChangeAndRaise(x => x.GridSize, drawing, value);
+            get => drawByStyle.GridSize;
+            set => drawByStyle.GridSize = value;
         }
         public bool SnapToGrid
         {
-            get => drawing.SnapToGrid;
-            set => ChangeAndRaise(x => x.SnapToGrid, drawing, value);
+            get => drawByStyle.SnapToGrid;
+            set => drawByStyle.SnapToGrid = value;
         }
         public IEnumerable<INamedValued<int>> DrawingTypes
         {
-            get => drawing.DrawingStyles.Keys;
+            get => drawByStyle.DrawingStyles.Keys;
         }
         public double AutoComplete
         {
             get => roomsCreator.AutoComplete;
-            set => ChangeAndRaise(x => x.AutoComplete, roomsCreator, value);
+            set => roomsCreator.AutoComplete = value;
         }
-        public List<Room> Rooms
+        public IEnumerable<Room> Rooms
         {
             get => roomsCreator.Rooms;
         }
@@ -58,10 +61,15 @@ namespace CanvasComponent.ViewModel
 
         private DragAndDropService<ISmartDevice> dragAndDrop { get; init; }
 
+        public PartialReadOnlyDictionary<NamedValue<int>, DrawingBase, int> DrawingStyles 
+        {
+            get => drawByStyle.DrawingStyles;
+        }
+
         public double TotalPrice { get => 
                 Rooms.Sum(x => x.Devices.Sum(y => y.DeterminPrice(DrawingHelper.ToMetersSquared(x.Size)))); }
 
-        public bool ShowGrid { get; set; } = true;
+        public bool ShowGrid { get; set; }
 
         public Canvas Canvas { get; set; }
         private Context2D ctx;
@@ -78,54 +86,57 @@ namespace CanvasComponent.ViewModel
 
         private async void onNewRooms(object sender, NewRoomsEventArgs e)
         {
-            await clearCanvas(ctx.CreateBatch());
-            drawing.currentStyle.ContinueDrawing = false;
-            foreach (var room in e.Rooms)
+            if (!await drawing.WaitAsync(1000))
+                return;
+            try
             {
-                var batch = ctx.CreateBatch();
-                await clearCanvas(batch);
-                await drawRoom(room, batch, color: "Blue");
-                await batch.SaveAsync();
-                await batch.DisposeAsync();
-                    
-                if (NewRoom is not null)
-                    await NewRoom(this, new(room));
+                drawByStyle.CurrentStyle.ContinueDrawing = false;
+                foreach (var room in e.Rooms)
+                {
+                    var batch = ctx.CreateBatch();
+                    await clearCanvas(batch);
+                    await drawRoom(room, batch, color: "Blue");
+                    await batch.SaveAsync();
+                    await batch.DisposeAsync();
+
+                    if (NewRoom is not null)
+                        await NewRoom(this, new(room));
+                }
             }
-            draw(null, null);
+            finally
+            {
+                drawing.Release();
+            }
+            await draw();
         }
 
-        public CanvasViewModel()
+        public CanvasViewModel(IEnumerable<ISmartDevice> devices) : this(new DrawByStyle(), new RoomsCreator(), devices)
         {
-            drawing.Draw += draw;
-            drawing.NewLines += roomsCreator.NewLines;
+            
+            
+        }
+        public CanvasViewModel(DrawByStyleBase byStyle, RoomsCreatorBase roomsCreator, IEnumerable<ISmartDevice> devices)
+        {
+            if (byStyle is null)
+                throw new ArgumentNullException(nameof(byStyle));
+            if (roomsCreator is null)
+                throw new ArgumentNullException(nameof(roomsCreator));
+            if (devices is null)
+                throw new ArgumentNullException(nameof(devices));
+            if (devices.GroupBy(x => x.Id).Any(x => x.Count() > 1))
+                throw new ArgumentException("Colection of devices contains duplicate ids.");
+
+            drawByStyle = byStyle;
+            this.roomsCreator = roomsCreator;
+            drawByStyle.Draw += drawCalled;
+            drawByStyle.NewLines += roomsCreator.NewLines;
             roomsCreator.NewRooms += onNewRooms;
-            drawing.GridSize = 50;
-            var icon = "data:image/png;base64," +
-                Convert.ToBase64String(File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "idea.png")));
-            Devices = new List<ISmartDevice>()
-            { 
-                new PricePerMeterSmartDevice()
-                {
-                    Id = 0,
-                    Price = 10,
-                    Icon = icon,
-                },
-                new DevicesPerMeterSmartDevice()
-                {
-                    Id = 1,
-                    Price = 10,
-                    DevicesPerMeter = 3,
-                    Icon = icon,
-                },
-                new DevicesPerRoomSmartDevice()
-                {
-                    Id = 10,
-                    Price = 10,
-                    DevicesInRoom = 2,
-                    Icon = icon,
-                }
-            };
+            drawByStyle.GridSize = 50;
             dragAndDrop = new();
+            drawByStyle.PropertyChanged += OnPropertyChanged;
+            PropertyChanged += drawCalled;
+            Devices = devices;
+            
         }
 
         public async Task OnAfterRender(bool firstTime)
@@ -137,15 +148,23 @@ namespace CanvasComponent.ViewModel
                 await ctx.LineCapAsync(LineCap.Round);
                 if (DrawingHelper is null)
                     DrawingHelper = new DrawingHelper(0, 0, 0, 0);
+                await draw();
             }
 
         }
 
-        private async void draw(object sender, EventArgs e)
+        private async Task draw()
         {
-            Batch2D batch = ctx.CreateBatch();
+            if (ctx is null)
+                return;
+
+            if (!await drawing.WaitAsync(5))
+                return;
+
+            Batch2D batch = null; 
             try
             {
+                batch = ctx.CreateBatch();
                 await batch.LineWidthAsync(Thickness);
 
                 await clearCanvas(batch);
@@ -153,21 +172,25 @@ namespace CanvasComponent.ViewModel
                 foreach (var line in roomsCreator.LinesWithoutRoom)
                     await drawLine(line, "Black", batch);
 
-                foreach (var line in drawing.Lines)
+                foreach (var line in drawByStyle.Lines)
                     await drawLine(line, "Red", batch, true);
 
                 foreach (var room in Rooms)
-                        await drawRoom(room, batch);
-                
-                await batch.LineWidthAsync(0.5);
+                    await drawRoom(room, batch);
+
                 if (ShowGrid)
                     await addGrid(batch);
             }
             finally
             {
-                await batch.DisposeAsync();
+                if(batch is not null)
+                    await batch.DisposeAsync();
+                drawing.Release();
             }
         }
+
+        private async void drawCalled(object sender, EventArgs e)
+            => await draw();
 
         private async Task drawRoom(Room room, Batch2D batch = null, string color = "Purple")
         {
@@ -177,10 +200,10 @@ namespace CanvasComponent.ViewModel
                 foreach (var line in room.Lines)
                     await drawLine(line, color, disposableBatch, true);
 
-                /*Line cross = new(new(room.Center.X - 5, room.Center.Y - 5), new(room.Center.X + 5, room.Center.Y + 5));
+                Line cross = new(new(room.Center.X - 5, room.Center.Y - 5), new(room.Center.X + 5, room.Center.Y + 5));
                 await drawLine(cross, "Blue", disposableBatch);
                 cross = new(new(room.Center.X + 5, room.Center.Y - 5), new(room.Center.X - 5, room.Center.Y + 5));
-                await drawLine(cross, "Blue", disposableBatch);*/
+                await drawLine(cross, "Blue", disposableBatch);
                 var dict = Devices.ToDictionary(x => x.Id, x => x.Icon);
                 var center = room.Center;
                 if (!string.IsNullOrEmpty(room.Name))
@@ -226,38 +249,42 @@ namespace CanvasComponent.ViewModel
 
         public void OnMouseDown(MouseEventArgs e)
         {
-            if(e.Button == 0)
-                drawing.MouseDown(DrawingHelper.TransformEventArgs(e));
+            if (e.Button == 0)
+                drawByStyle.MouseDown(DrawingHelper.TransformEventArgs(e));
+            else
+                drawByStyle.Clear();
         }
 
         public void OnMouseMove(MouseEventArgs e)
-            => drawing.MouseMove(DrawingHelper.TransformEventArgs(e));
+            => drawByStyle.MouseMove(DrawingHelper.TransformEventArgs(e));
 
         public void OnDragStart(ISmartDevice device, string zone)
             => dragAndDrop.OnDragStart(device, zone);
 
         public void Dispose()
         {
-            ctx.DisposeAsync();
+            ctx?.DisposeAsync();
         }
 
-        public void OnDragDrop(DragEventArgs e, string zone)
+        public async Task OnDragDrop(DragEventArgs e, string zone)
         {
             e = DrawingHelper.TransformEventArgs(e);
             var droppedPoint = new Point(e.ClientX, e.ClientY);
-            var room = Rooms.FirstOrDefault(x => x.Contains(droppedPoint));
+            var possibleRooms = Rooms.Where(x => x.Contains(droppedPoint));
+            var room = Rooms.FirstOrDefault(x => possibleRooms.All(y => y == x || !y.Contains(x)));
             var currentDragged = dragAndDrop.OnDrop(zone);
             if (room is not null && currentDragged != default)
             {
                 room.Devices.Add(currentDragged);
                 OnPropertyChanged(nameof(TotalPrice));
             }
-            draw(null, null);
+            await draw();
         }
 
         public void OnKeyDown(KeyboardEventArgs e)
         {
-            
+            if (e.Key == "Escape")
+                drawByStyle.Clear();
         }
     }
 }

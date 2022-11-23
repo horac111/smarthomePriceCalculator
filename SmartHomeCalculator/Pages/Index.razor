@@ -6,11 +6,11 @@
 
 
 <div class="wrapper">
-    <button @onclick="() => show_sidebar ^= true" class="btn btn-primary chevron">
-        <i class="fa fa-chevron-circle-@(show_sidebar ? "left" : "right")"> <!-- <img src="@("data:image/png;base64," + Convert.ToBase64String(System.IO.File.ReadAllBytes("C:\\Users\\horac\\Downloads\\menu.png")))" width="16" height="16"  />--></i>
+    <button @onclick="() => show_sidebar ^= true" class="btn btn-primary chevron" style="z-index:2">
+        <i class="fa fa-chevron-circle-@(show_sidebar ? "left" : "right")" /> 
     </button>
 
-    <aside class="sidebar sidebar-@(show_sidebar ? "show" : "hide")">
+    <nav class="sidebar sidebar-@(show_sidebar ? "show" : "hide")" style="z-index:1">
         <div class="sidebar-content mt-5">
             <EditForm Model="viewModel">
                 <div class="row h-auto ">
@@ -43,7 +43,7 @@
                 </div>
             </EditForm>
         </div>
-    </aside>
+    </nav>
 
 
     <div class="content">
@@ -62,8 +62,6 @@
 @code
 {
     bool show_sidebar = true;
-
-    
 
     protected override void OnInitialized()
     {

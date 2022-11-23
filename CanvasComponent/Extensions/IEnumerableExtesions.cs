@@ -27,6 +27,8 @@ namespace CanvasComponent.Extensions
 
         public static Line ClosestLine(this IEnumerable<Line> lines, Point point)
         {
+            if(point == default)
+                return null;
             Line closest = null;
             double closestDistance = double.PositiveInfinity;
             foreach (var line in lines)
@@ -43,6 +45,8 @@ namespace CanvasComponent.Extensions
 
         public static Point[] CloseLines(this IEnumerable<Line> lines, IList<Point> points, double maxDistance)
         {
+            if (points is null || points.Count == 0)
+                return new Point[0];
             Point[] result = points.ToArray();
             double[] distances = points.Select(x => double.PositiveInfinity).ToArray();
             foreach (var line in lines)

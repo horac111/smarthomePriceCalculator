@@ -12,95 +12,73 @@ using System.Threading.Tasks;
 
 namespace CanvasComponent.Model
 {
-    class DrawByStyle : NotifyPropertyChanged, IDrawByStyle
+    class DrawByStyle : DrawByStyleBase
     {
         private int selectedDrawingStyle = 2;
-        internal protected int SelectedDrawingStyle
+
+        internal protected override int SelectedDrawingStyle
         {
             get => selectedDrawingStyle;
             set
             {
-                currentStyle.NewLines -= onNewLines;
-                currentStyle.ContinueDrawing = false;
+                CurrentStyle.NewLines -= OnNewLines;
+                CurrentStyle.ContinueDrawing = false;
                 selectedDrawingStyle = value;
-                currentStyle.NewLines += onNewLines;
-                lastPoint = default;
+                CurrentStyle.NewLines += OnNewLines;
+                LastPoint = default;
                 Lines = new List<Line>();
-                onDraw();
+                OnDraw();
             }
         }
 
-        internal protected bool SnapToGrid { get; set; }
+        internal protected override DrawingBase CurrentStyle { get => DrawingStyles.GetChangable(selectedDrawingStyle); }
 
-        internal protected double GridSize { get; set; }
-
-        internal protected IEnumerable<Line> Lines { get; set; } = new List<Line>();
-
-        internal DrawingBase currentStyle { get => DrawingStyles.GetChangable(selectedDrawingStyle); }
-
-        protected Point lastPoint;
 
         public DrawByStyle()
         {
-            currentStyle.NewLines += onNewLines;
+            CurrentStyle.NewLines += OnNewLines;
         }
 
-        internal PartialReadOnlyDictionary<NamedValue<int>, DrawingBase, int> DrawingStyles { get; } = new(3)
-        {
-            { new("Draw as straight line", (int)DrawingStyle.StraightLine), new StraightLine() },
-            { new("Draw as polygon", (int)DrawingStyle.Polygon), new Polygon() },
-            { new("Draw as Rectangle", (int)DrawingStyle.Rectangle), new Rectangle() },
-        };
-
-        public event EventHandler<NewLinesEventArgs> NewLines;
-
-        public event EventHandler Draw;
-
-        protected void onDraw()
-        {
-            Draw?.Invoke(this, new());
-        }
-
-        protected void onNewLines(object sender, NewLinesEventArgs e)
-        {
-            NewLines?.Invoke(sender, e);
-        }
-
-        public void MouseDown(MouseEventArgs e)
+        internal protected override 
+            PartialReadOnlyDictionary<NamedValue<int>, DrawingBase, int> DrawingStyles { get; } = new(3)
+            {
+                { new("Draw as straight line", (int)DrawingStyle.StraightLine), new StraightLine() },
+                { new("Draw as polygon", (int)DrawingStyle.Polygon), new Polygon() },
+                { new("Draw as Rectangle", (int)DrawingStyle.Rectangle), new Rectangle() },
+            };
+        
+        public override void MouseDown(MouseEventArgs e)
         {
             Point point = snapedPoint(e);
-            if (lastPoint != default)
+            if (LastPoint != default)
             {
-                
-                currentStyle.OnMouseDown(lastPoint, point);
-                if (!currentStyle.ContinueDrawing)
+                CurrentStyle.OnMouseDown(LastPoint, point);
+                if (!CurrentStyle.ContinueDrawing)
                 {
                     Lines = new List<Line>();
-                    lastPoint = default;
+                    LastPoint = default;
                 }
                 else
                 {
-                    Lines = currentStyle.OnMouseMove(lastPoint, point).Concat(Lines);
-                    lastPoint = point;
+                    Lines = CurrentStyle.OnMouseMove(LastPoint, point).Concat(Lines);
+                    LastPoint = point;
                 }
-                    
+                GC.Collect();
             }
             else
             {
-                lastPoint = point;
-                currentStyle.ContinueDrawing = true;
+                LastPoint = point;
+                CurrentStyle.ContinueDrawing = true;
             }
-                
-
         }
 
-        public void MouseMove(MouseEventArgs e)
+        public override void MouseMove(MouseEventArgs e)
         {
-            if (currentStyle.ContinueDrawing)
+            if (CurrentStyle.ContinueDrawing)
             {
                 Point point = snapedPoint(e);
-                Lines = Lines.ReplaceLasts(currentStyle.OnMouseMove(lastPoint, point));
-                onDraw();
+                Lines = Lines.ReplaceLasts(CurrentStyle.OnMouseMove(LastPoint, point));
+                OnDraw();
             }
         }
 
@@ -114,5 +92,13 @@ namespace CanvasComponent.Model
 
         private double closestMultiplier(double number)
             => number - ((number % GridSize > GridSize / 2) ? (number % GridSize - GridSize)  : number % GridSize);
+
+        public override void Clear()
+        {
+            LastPoint = default;
+            CurrentStyle.ContinueDrawing = false;
+            Lines = new List<Line>();
+            OnDraw();
+        }
     }
 }

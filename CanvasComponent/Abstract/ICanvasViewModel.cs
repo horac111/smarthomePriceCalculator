@@ -19,7 +19,7 @@ namespace CanvasComponent.Abstract
         IDrawingHelper DrawingHelper { get; set; }
         IEnumerable<INamedValued<int>> DrawingTypes { get; }
         double GridSize { get; set; }
-        List<Room> Rooms { get; }
+        IEnumerable<Room> Rooms { get; }
         int SelectedStyle { get; set; }
         bool ShowGrid { get; set; }
         bool SnapToGrid { get; set; }
@@ -30,7 +30,7 @@ namespace CanvasComponent.Abstract
         NewRoomDelegate NewRoom { get; set; }
         void Dispose();
         Task OnAfterRender(bool firstTime);
-        void OnDragDrop(DragEventArgs e, string zone);
+        Task OnDragDrop(DragEventArgs e, string zone);
         void OnDragStart(ISmartDevice device, string zone);
         void OnMouseDown(MouseEventArgs e);
         void OnMouseMove(MouseEventArgs e);

@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 
 namespace CanvasComponent.Model
 {
-    internal class NamedValue<T> : INamedValued<T>, IEquatable<T>, IEquatable<NamedValue<T>> where T : struct
+    public class NamedValue<T> : INamedValued<T>, IEquatable<T>, IEquatable<NamedValue<T>> where T : struct
     {
         public NamedValue() { }
 

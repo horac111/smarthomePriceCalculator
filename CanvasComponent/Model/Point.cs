@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace CanvasComponent.Model
 {
     
-    public struct Point
+    public struct Point : IComparable<Point>
     {
         public double X { get; init; }
         public double Y { get; init; }
@@ -50,5 +50,17 @@ namespace CanvasComponent.Model
 
         public double Distance(Point second)
             => Math.Sqrt(Math.Pow(X - second.X, 2) + Math.Pow(Y - second.Y, 2));
+
+        public override string ToString()
+        {
+            return X.ToString() + " " + Y.ToString();
+        }
+
+        public int CompareTo(Point other)
+        {
+            if(other.X + other.Y == X + Y)
+                return X == other.X ? 0 : (X > other.X ? -1 : 1);
+            return other.X + other.Y > X + Y ? -1 : 1;
+        }
     }
 }

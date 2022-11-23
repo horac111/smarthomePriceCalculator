@@ -2,6 +2,7 @@
 using CanvasComponent.Extensions;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,8 +14,9 @@ namespace CanvasComponent.Model
         public Room(IEnumerable<Line> lines)
         {
             Lines = lines.ToList().AsReadOnly();
-            Center = calculateCenter();
             Size = calculateSize();
+            Center = calculateCenter();
+
         }
 
         public IReadOnlyList<Line> Lines { get; }
@@ -23,39 +25,43 @@ namespace CanvasComponent.Model
 
         public ICollection<ISmartDevice> Devices { get; } = new List<ISmartDevice>();
 
-        public double Size { get;  }
+        public double Size { get; }
 
         public string Name { get; set; }
 
-        public ICollection<Room> Insiders  { get; } = new HashSet<Room>();
+        public ICollection<Room> Insiders { get; } = new HashSet<Room>();
 
         public override bool Equals(object obj)
         {
-            if(obj is Room room)
+            if (obj is Room room)
             {
-                var myPoints = getAllPoints();
-                var roomPoints = room.getAllPoints();
-                return Center.X.NearlyEqual(room.Center.X)
-                   && Center.Y.NearlyEqual(room.Center.Y)
-                   && myPoints.Count() == roomPoints.Count() 
+                if (!Center.X.NearlyEqual(room.Center.X)
+                   || !Center.Y.NearlyEqual(room.Center.Y))
+                    return false; 
+                var myPoints = GetAllPoints();
+                var roomPoints = room.GetAllPoints();
+                return myPoints.Count() == roomPoints.Count()
                    && myPoints.Intersect(roomPoints).Count() == myPoints.Count();
             }
             return false;
-            
+
         }
 
         public override int GetHashCode()
         {
-            return HashCode.Combine(Center, getAllPoints().Sum(x => x.GetHashCode()));
+            return HashCode.Combine(Center, GetAllPoints().Sum(x => x.GetHashCode()));
         }
 
         protected virtual Point calculateCenter()
         {
-            var allPoints = getAllPoints();
+            var allPoints = GetAllPoints();
+            var centroid = getCentroid(allPoints);
+            if (centroid != default && Lines.ContainsPoint(centroid))
+                return centroid;
             double x = allPoints.Sum(x => x.X) / allPoints.Count();
             double y = allPoints.Sum(x => x.Y) / allPoints.Count();
             Point candidate = new(x, y);
-            if(Lines.ContainsPoint(candidate))
+            if (Lines.ContainsPoint(candidate))
                 return candidate;
             var closestLine = Lines.ClosestLine(candidate);
             var point = closestLine.PerpendicularPoint(candidate);
@@ -74,20 +80,63 @@ namespace CanvasComponent.Model
             return point;
         }
 
+        private Point getCentroid(IEnumerable<Point> allPoints)
+        { 
+            if(Size == default || allPoints is null || !allPoints.Any())
+                return default;
+
+
+            double X = 0;
+            double Y = 0;
+            double secondFactor;
+            Point previousPoint = allPoints.Last();
+            foreach (Point point in allPoints)
+            {
+                secondFactor = previousPoint.X * point.Y - point.X * previousPoint.Y;
+                X += (previousPoint.X + point.X) * secondFactor;
+                Y += (previousPoint.Y + point.Y) * secondFactor;
+                previousPoint = point;
+            }
+
+            X /= (6 * Size);
+            Y /= (6 * Size);
+
+            if (X < 0)
+            {
+                X = -X;
+                Y = -Y;
+            }
+
+            return new Point(X, Y);
+        }
+
         protected virtual double calculateSize()
             => Math.Abs(Lines.Sum(x => (x.Start.X + x.End.X) * (x.Start.Y - x.End.Y))) / 2;
 
         public virtual bool Contains(Point point)
-            => Insiders.All(x => !x.Contains(point)) && Lines.ContainsPoint(point);
+            => /*Insiders.All(x => !x.Contains(point)) &&*/ Lines.ContainsPoint(point);
 
         public virtual bool Contains(Room room)
         {
             if(!Lines.ContainsPoint(room.Center))
                 return false;
-            return room.getAllPoints().All(x => Lines.ContainsPoint(x));
+            return room.GetAllPoints().All(x => Lines.ContainsPoint(x));
         }
 
-        protected virtual IEnumerable<Point> getAllPoints()
+        public virtual bool Equals(IEnumerable<Point> points)
+        {
+            if (points is null)
+                return false;
+            return GetAllPoints().SequenceEqual(points);
+        }
+
+        internal protected virtual IEnumerable<Point> GetAllPoints()
          => Lines.SelectMany(x => new[] { x.Start, x.End }).Distinct();
+
+        public static bool operator ==(Room first, Room second)
+         => first.Equals(second);
+
+        public static bool operator !=(Room first, Room second)
+         => !first.Equals(second);
     }
 }

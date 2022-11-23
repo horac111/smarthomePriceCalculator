@@ -2,25 +2,23 @@
 @using CanvasComponent.ViewModel
 @inject IJSRuntime js
 
-<div class="container h-100 w-100 mw-100 mh-100">
-    <div class="row justify-content-start h-100 w-100">
-        <div id="CanvasContainer" class="col-11" dropzone="move" ondragover="event.preventDefault()">
-            <Excubo.Blazor.Canvas.Canvas width="@(viewModel.DrawingHelper?.Width ?? 0)"
+<div class="container h-100 w-100 mw-100 mh-100 m-0">
+    <div class="row justify-content-start h-100 w-100 m-0">
+        <div id="CanvasContainer" class="p-0 m-0" style="width: calc(100% - 40px)" dropzone="move" ondragover="event.preventDefault()">
+            <Excubo.Blazor.Canvas.Canvas tabindex="0" width="@(viewModel.DrawingHelper?.Width ?? 0)"
                                          height="@(viewModel.DrawingHelper?.Height ?? 0)"
                                          @onmousemove="@viewModel.OnMouseMove" @onmousedown="@viewModel.OnMouseDown"
                                          @ondrop="@(e => viewModel.OnDragDrop(e, "CanvasContainer"))"
                                          @ref="viewModel.Canvas" draggable="false" @onkeydown="@viewModel.OnKeyDown" />
         </div>
 
-        <div dropzone="move" class="justify-content-center align-content-center col-1">
-            <div class="mx-auto">
-                @foreach (var device in viewModel.Devices)
-                {
-                    <img src="@device.Icon" height="32" width="32" draggable="true"
-                     @ondragstart="@(e => viewModel.OnDragStart(device, "CanvasContainer"))" />
-                    <img id="@("img" + device.Id)" height="32" width="32" style="display:none" src="@device.Icon" />
-                }
-            </div>
+        <div dropzone="move" class="justify-content-center align-content-center" style="width: 32px">
+            @foreach (var device in viewModel.Devices)
+            {
+                <img src="@device.Icon" height="32" width="32" draggable="true"
+                    @ondragstart="@(e => viewModel.OnDragStart(device, "CanvasContainer"))" />
+                <img id="@("img" + device.Id)" height="32" width="32" style="display:none" src="@device.Icon" />
+            }
         </div>
     </div>
     <footer class="row justify-content-center">
@@ -46,20 +44,13 @@
         {
             await InvokeAsync(async () =>
             {
-                try
-                {
-                    ModalParameters param = new();
-                    param.Add(nameof(InputText.room), e.Room);
-                    var modal = Modal.Show<InputText>("Naming room.", param, new() { Position = ModalPosition.BottomLeft, DisableBackgroundCancel = false });
-                    var result = await modal.Result;
-                }
-                catch (Exception ex)
-                {
-                    ;
-                }
+                ModalParameters param = new();
+                param.Add(nameof(InputText.room), e.Room);
+                var modal = Modal.Show<InputText>("Naming room.", param, new() { Position = ModalPosition.BottomLeft, DisableBackgroundCancel = false });
+                var result = await modal.Result;
             });
-            
-            
+
+
         };
         base.OnInitialized();
     }
@@ -67,10 +58,11 @@
     {
         if(firstRender)
         {
-            var rect = await js.InvokeAsync<BoundingClientRect>("eval", 
-               $"let e = document.querySelector(\"#CanvasContainer\"); e = e.getBoundingClientRect();  e");
+            var rect = await js.InvokeAsync<BoundingClientRect>("eval",
+              $"let e = document.querySelector(\"#CanvasContainer\"); e = e.getBoundingClientRect();  e");
             viewModel.DrawingHelper = new DrawingHelper(rect);
         }
+        
         await viewModel.OnAfterRender(firstRender);
         base.OnAfterRender(firstRender);
     }

@@ -11,22 +11,9 @@ using System.Threading.Tasks;
 
 namespace CanvasComponent.Model
 {
-    public class RoomsCreator : IRoomsCreator
+    public class RoomsCreator : RoomsCreatorBase
     {
-        internal protected List<Line> AllLines { get; set; } = new();
-
-        internal protected List<Room> Rooms { get; private set; } = new();
-
-        internal IEnumerable<Line> LinesWithoutRoom { get => AllLines.Except(Rooms.SelectMany(x => x.Lines)); }
-
-        internal protected double AutoComplete { get; set; } = 5;
-
-        public event EventHandler<NewRoomsEventArgs> NewRooms;
-
-        protected void onNewRoom(IEnumerable<Room> rooms)
-        => NewRooms?.Invoke(this, new(rooms));
-
-        protected internal virtual void NewLines(object sender, NewLinesEventArgs e)
+        protected internal override void NewLines(object sender, NewLinesEventArgs e)
         {
             if (e.Lines is not null && e.Lines.Count() > -1)
             {
@@ -44,25 +31,27 @@ namespace CanvasComponent.Model
 
         protected virtual void detectClosedComponent()
         {
-            var graph = createGraph();
+            /*var graph = createGraph();
             HashSet<Point> visited = new();
             HashSet<Room> newRooms = new();
             while (graph.Keys.Count() > visited.Count)
             {
                 var point = graph.Keys.SkipWhile(x => visited.Contains(x)).First();
                 createRooms(graph, new(), point, newRooms, visited, default);
-            }
+            }*/
+            Graph graph = new(AllLines);
+            var newRooms = graph.CreateRooms().ToList();
             var toAdd = newRooms.Except(Rooms);
             if(toAdd.Count() > 0)
             {
-                foreach (Room room in Rooms.Concat(toAdd))
+                /*foreach (Room room in Rooms.Concat(toAdd))
                     foreach (Room room2 in Rooms.Concat(toAdd))
                     {
                         if (!room.Equals(room2) && !room2.Insiders.Contains(room) && room.Contains(room2))
                             room.Insiders.Add(room2);
-                    }
+                    }*/
 
-                onNewRoom(toAdd);
+                OnNewRoom(toAdd);
                 Rooms.AddRange(toAdd);
             }
         }
@@ -123,56 +112,6 @@ namespace CanvasComponent.Model
             else
                 toRoom.First().Start = currentLine.Start;
             return new(toRoom);
-        }
-
-        protected virtual Dictionary<Point, List<Point>> createGraph()
-        {
-            var dict = AllLines.Select((x, i) => new {line = x, index = i})
-                .ToDictionary(x => x.index, x => new List<Line>() { x.line});
-            for (int i = 0; i < AllLines.Count(); i++)
-            {
-                for (int j = i + 1; j < AllLines.Count(); j++)
-                {
-                    var firstLine = AllLines[i];
-                    var secondLine = AllLines[j];
-                    var point = firstLine.Intersection(secondLine);
-                    if (point != default)
-                    {
-                        if(firstLine.End != point && firstLine.Start != point)
-                            addToDict(point, dict[i]);
-                        if (secondLine.End != point && secondLine.Start != point)
-                            addToDict(point, dict[j]);
-                    }
-                }
-            }
-            Dictionary<Point, List<Point>> pairs = new();
-            foreach (var line in dict.SelectMany(x => x.Value))
-            {
-                if (pairs.ContainsKey(line.Start))
-                    pairs[line.Start].Add(line.End);
-                else
-                    pairs.Add(line.Start, new List<Point>() { line.End});
-                if (pairs.ContainsKey(line.End))
-                    pairs[line.End].Add(line.Start);
-                else
-                    pairs.Add(line.End, new List<Point>() { line.Start });
-            }
-            return pairs;
-        }
-
-        private void addToDict(Point point, List<Line> lines)
-        {
-            for(int i = 0; i < lines.Count; i++)
-            {
-                var line = lines[i];
-                if (line.IsPointOnLine(point))
-                {
-                    lines.RemoveAt(i);
-                    lines.Insert(i, new Line(point, line.End));
-                    lines.Insert(i, new Line(line.Start, point));
-                    return;
-                }
-            }
         }
     }
 

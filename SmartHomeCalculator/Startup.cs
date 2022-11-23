@@ -1,5 +1,6 @@
 using Blazored.Modal;
 using CanvasComponent.Abstract;
+using CanvasComponent.Model.SmartDevice;
 using CanvasComponent.ViewModel;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Components;
@@ -10,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 
@@ -28,9 +30,36 @@ namespace SmartHomeCalculator
         // For more information on how to configure your application, visit https://go.microsoft.com/fwlink/?LinkID=398940
         public void ConfigureServices(IServiceCollection services)
         {
+            var icon = "data:image/png;base64," +
+                Convert.ToBase64String(File.ReadAllBytes(Path.Combine(Directory.GetCurrentDirectory(), "idea.png")));
+            var devices = new List<ISmartDevice>()
+            {
+                new PricePerMeterSmartDevice()
+                {
+                    Id = 0,
+                    Price = 10,
+                    Icon = icon,
+                },
+                new DevicesPerMeterSmartDevice()
+                {
+                    Id = 1,
+                    Price = 10,
+                    DevicesPerMeter = 3,
+                    Icon = icon,
+                },
+                new DevicesPerRoomSmartDevice()
+                {
+                    Id = 10,
+                    Price = 10,
+                    DevicesInRoom = 2,
+                    Icon = icon,
+                }
+            };
+
             services.AddRazorPages();
             services.AddServerSideBlazor();
             services.AddSingleton<ICanvasViewModel, CanvasViewModel>();
+            services.AddSingleton<IEnumerable<ISmartDevice>>(devices);
             services.AddBlazoredModal();
         }
 

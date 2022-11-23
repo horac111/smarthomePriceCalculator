@@ -11,9 +11,10 @@ namespace CanvasComponent.Model
         public event PropertyChangedEventHandler PropertyChanged;
 
         protected void OnPropertyChanged([CallerMemberName] string name = null)
-        {
-            PropertyChanged?.Invoke(this, new(name));
-        }
+            => PropertyChanged?.Invoke(this, new(name));
+
+        protected void OnPropertyChanged(object sender, PropertyChangedEventArgs e)
+            => PropertyChanged?.Invoke(sender, e);
 
         protected void ChangeAndRaise<T>(ref T field, T value, [CallerMemberName] string name = null)
         {
