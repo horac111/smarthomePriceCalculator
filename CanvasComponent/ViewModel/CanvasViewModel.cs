@@ -1,18 +1,13 @@
 ﻿using CanvasComponent.Abstract;
-using CanvasComponent.Drawing;
 using CanvasComponent.EventArguments;
-using CanvasComponent.Extensions;
 using CanvasComponent.Model;
-using CanvasComponent.Model.SmartDevice;
 using CanvasComponent.Service;
 using Excubo.Blazor.Canvas;
 using Excubo.Blazor.Canvas.Contexts;
 using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
-using System.IO;
 using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -43,7 +38,7 @@ namespace CanvasComponent.ViewModel
             get => drawByStyle.SnapToGrid;
             set => drawByStyle.SnapToGrid = value;
         }
-        public IEnumerable<INamedValued<int>> DrawingTypes
+        public IEnumerable<INamedValue<int>> DrawingTypes
         {
             get => drawByStyle.DrawingStyles.Keys;
         }
@@ -61,13 +56,11 @@ namespace CanvasComponent.ViewModel
 
         private DragAndDropService<ISmartDevice> dragAndDrop { get; init; }
 
-        public PartialReadOnlyDictionary<NamedValue<int>, DrawingBase, int> DrawingStyles 
+        public double TotalPrice
         {
-            get => drawByStyle.DrawingStyles;
+            get =>
+                Rooms.Sum(x => x.Devices.Sum(y => y.DeterminPrice(DrawingHelper.ToMetersSquared(x.Size))));
         }
-
-        public double TotalPrice { get => 
-                Rooms.Sum(x => x.Devices.Sum(y => y.DeterminPrice(DrawingHelper.ToMetersSquared(x.Size)))); }
 
         public bool ShowGrid { get; set; }
 
@@ -84,7 +77,7 @@ namespace CanvasComponent.ViewModel
 
         public NewRoomDelegate NewRoom { get; set; }
 
-        private async void onNewRooms(object sender, NewRoomsEventArgs e)
+        private async void OnNewRooms(object sender, NewRoomsEventArgs e)
         {
             if (!await drawing.WaitAsync(1000))
                 return;
@@ -94,8 +87,8 @@ namespace CanvasComponent.ViewModel
                 foreach (var room in e.Rooms)
                 {
                     var batch = ctx.CreateBatch();
-                    await clearCanvas(batch);
-                    await drawRoom(room, batch, color: "Blue");
+                    await ClearCanvas(batch);
+                    await DrawRoom(room, batch, color: "Blue");
                     await batch.SaveAsync();
                     await batch.DisposeAsync();
 
@@ -107,13 +100,13 @@ namespace CanvasComponent.ViewModel
             {
                 drawing.Release();
             }
-            await draw();
+            await Draw();
         }
 
         public CanvasViewModel(IEnumerable<ISmartDevice> devices) : this(new DrawByStyle(), new RoomsCreator(), devices)
         {
-            
-            
+
+
         }
         public CanvasViewModel(DrawByStyleBase byStyle, RoomsCreatorBase roomsCreator, IEnumerable<ISmartDevice> devices)
         {
@@ -128,15 +121,15 @@ namespace CanvasComponent.ViewModel
 
             drawByStyle = byStyle;
             this.roomsCreator = roomsCreator;
-            drawByStyle.Draw += drawCalled;
+            drawByStyle.Draw += DrawCalled;
             drawByStyle.NewLines += roomsCreator.NewLines;
-            roomsCreator.NewRooms += onNewRooms;
+            roomsCreator.NewRooms += OnNewRooms;
             drawByStyle.GridSize = 50;
             dragAndDrop = new();
             drawByStyle.PropertyChanged += OnPropertyChanged;
-            PropertyChanged += drawCalled;
+            PropertyChanged += DrawCalled;
             Devices = devices;
-            
+
         }
 
         public async Task OnAfterRender(bool firstTime)
@@ -148,12 +141,12 @@ namespace CanvasComponent.ViewModel
                 await ctx.LineCapAsync(LineCap.Round);
                 if (DrawingHelper is null)
                     DrawingHelper = new DrawingHelper(0, 0, 0, 0);
-                await draw();
+                await Draw();
             }
 
         }
 
-        private async Task draw()
+        private async Task Draw()
         {
             if (ctx is null)
                 return;
@@ -161,13 +154,13 @@ namespace CanvasComponent.ViewModel
             if (!await drawing.WaitAsync(5))
                 return;
 
-            Batch2D batch = null; 
+            Batch2D batch = null;
             try
             {
                 batch = ctx.CreateBatch();
                 await batch.LineWidthAsync(Thickness);
 
-                await clearCanvas(batch);
+                await ClearCanvas(batch);
 
                 foreach (var line in roomsCreator.LinesWithoutRoom)
                     await drawLine(line, "Black", batch);
@@ -176,25 +169,25 @@ namespace CanvasComponent.ViewModel
                     await drawLine(line, "Red", batch, true);
 
                 foreach (var room in Rooms)
-                    await drawRoom(room, batch);
+                    await DrawRoom(room, batch);
 
                 if (ShowGrid)
                     await addGrid(batch);
             }
             finally
             {
-                if(batch is not null)
+                if (batch is not null)
                     await batch.DisposeAsync();
                 drawing.Release();
             }
         }
 
-        private async void drawCalled(object sender, EventArgs e)
-            => await draw();
+        private async void DrawCalled(object sender, EventArgs e)
+            => await Draw();
 
-        private async Task drawRoom(Room room, Batch2D batch = null, string color = "Purple")
+        private async Task DrawRoom(Room room, Batch2D batch = null, string color = "Purple")
         {
-            var disposableBatch = batch ??  ctx.CreateBatch();
+            var disposableBatch = batch ?? ctx.CreateBatch();
             try
             {
                 foreach (var line in room.Lines)
@@ -229,12 +222,12 @@ namespace CanvasComponent.ViewModel
             await batch.MoveToAsync(line.Start.X, line.Start.Y);
             await batch.LineToAsync(line.End.X, line.End.Y);
             if (showLength)
-                await batch.StrokeTextAsync($"{Math.Round( DrawingHelper.ToMeters(line.Length()), 2)} m",
+                await batch.StrokeTextAsync($"{Math.Round(DrawingHelper.ToMeters(line.Length()), 2)} m",
                     ((line.Start.X + line.End.X) / 2) + 5, ((line.Start.Y + line.End.Y) / 2) + 10);
             await batch.StrokeAsync();
         }
 
-        private async Task clearCanvas(Batch2D batch)
+        private async Task ClearCanvas(Batch2D batch)
         {
             await batch.ClearRectAsync(0, 0, DrawingHelper.Width, DrawingHelper.Height);
         }
@@ -278,7 +271,7 @@ namespace CanvasComponent.ViewModel
                 room.Devices.Add(currentDragged);
                 OnPropertyChanged(nameof(TotalPrice));
             }
-            await draw();
+            await Draw();
         }
 
         public void OnKeyDown(KeyboardEventArgs e)

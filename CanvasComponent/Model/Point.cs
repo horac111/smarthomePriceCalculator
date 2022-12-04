@@ -1,21 +1,17 @@
 ﻿using CanvasComponent.Extensions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CanvasComponent.Model
 {
-    
+
     public struct Point : IComparable<Point>
     {
         public double X { get; init; }
         public double Y { get; init; }
-        public Point(double x, double y) 
+        public Point(double x, double y)
         {
-           X = x;
-           Y = y;
+            X = x;
+            Y = y;
         }
         public static Point operator +(Point first, Point second)
             => new Point(first.X + second.X, first.Y + second.Y);
@@ -37,7 +33,7 @@ namespace CanvasComponent.Model
             return a + b;
         }
 
-        public static bool  operator ==(Point first, Point second)
+        public static bool operator ==(Point first, Point second)
          => first.Equals(second);
 
         public static bool operator !=(Point first, Point second)
@@ -58,7 +54,7 @@ namespace CanvasComponent.Model
 
         public int CompareTo(Point other)
         {
-            if(other.X + other.Y == X + Y)
+            if (other.X + other.Y == X + Y)
                 return X == other.X ? 0 : (X > other.X ? -1 : 1);
             return other.X + other.Y > X + Y ? -1 : 1;
         }

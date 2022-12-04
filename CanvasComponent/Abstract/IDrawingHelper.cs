@@ -9,7 +9,7 @@ namespace CanvasComponent.Abstract
         double Top { get; }
         double Width { get; }
 
-        double PixelsToMeter { get; set; } 
+        double PixelsToMeter { get; set; }
 
         public T TransformEventArgs<T>(T e) where T : MouseEventArgs;
 

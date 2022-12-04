@@ -1,5 +1,4 @@
 ﻿using CanvasComponent.Abstract;
-using CanvasComponent.Extensions;
 using System;
 
 namespace CanvasComponent.Model.SmartDevice

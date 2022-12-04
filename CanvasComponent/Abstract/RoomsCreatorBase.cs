@@ -1,5 +1,4 @@
 ﻿using CanvasComponent.EventArguments;
-using CanvasComponent.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -20,7 +19,7 @@ namespace CanvasComponent.Model
 
         protected internal abstract void NewLines(object sender, NewLinesEventArgs e);
 
-        protected virtual void OnNewRoom(IEnumerable<Room> rooms)
+        protected virtual void OnNewRooms(IEnumerable<Room> rooms)
             => NewRooms?.Invoke(this, new(rooms));
     }
 }

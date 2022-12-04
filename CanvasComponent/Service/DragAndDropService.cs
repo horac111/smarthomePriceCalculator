@@ -17,7 +17,7 @@ namespace CanvasComponent.Service
             data = dragging;
         }
 
-        public T OnDrop(string zone)    
+        public T OnDrop(string zone)
         {
             if (CanDrop(zone))
             {

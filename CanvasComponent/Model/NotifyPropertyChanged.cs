@@ -1,8 +1,8 @@
-﻿using System.ComponentModel;
-using System.Runtime.CompilerServices;
+﻿using System;
+using System.ComponentModel;
 using System.Linq.Expressions;
-using System;
 using System.Reflection;
+using System.Runtime.CompilerServices;
 
 namespace CanvasComponent.Model
 {
@@ -18,19 +18,19 @@ namespace CanvasComponent.Model
 
         protected void ChangeAndRaise<T>(ref T field, T value, [CallerMemberName] string name = null)
         {
-            if(field is null || !field.Equals(value))
+            if (field is null || !field.Equals(value))
             {
                 field = value;
                 OnPropertyChanged(name);
             }
         }
 
-        protected void ChangeAndRaise<T,V>(Expression<Func<V,T>> expr, V field, T value, [CallerMemberName] string name = null)
+        protected void ChangeAndRaise<T, V>(Expression<Func<V, T>> expr, V field, T value, [CallerMemberName] string name = null)
         {
             var member = ((MemberExpression)expr.Body).Member as PropertyInfo;
             member.SetValue(field, value);
             OnPropertyChanged(name);
         }
-        
+
     }
 }

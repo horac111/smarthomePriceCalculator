@@ -5,20 +5,17 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
-using System.Runtime.Serialization.Formatters.Binary;
-using System.Text;
 using System.Text.Json;
-using System.Threading.Tasks;
 
 namespace CanvasComponent.Model
 {
-    public class PartialReadOnlyDictionary<T, R, TInner> : IDictionary<T, R> where T: INamedValued<TInner>
+    public class PartialReadOnlyDictionary<T, R, TInner> : IDictionary<T, R> where T : INamedValue<TInner>
     {
         private Dictionary<T, R> dictionary = new();
 
         private Dictionary<TInner, T> keys = new();
 
-        private Dictionary<T, int>  indexes = new();
+        private Dictionary<T, int> indexes = new();
 
         private int unchangebleRecords;
 
@@ -36,7 +33,7 @@ namespace CanvasComponent.Model
             {
                 if (indexes[key] < unchangebleRecords)
                     return clone(dictionary[key]);
-                
+
                 return dictionary[key];
             }
             set
@@ -60,7 +57,7 @@ namespace CanvasComponent.Model
         {
             return dictionary[keys[key]];
         }
-             
+
 
         public PartialReadOnlyDictionary(int numberOfRecords)
         {
@@ -85,7 +82,7 @@ namespace CanvasComponent.Model
         {
             if (ContainsKey(key))
             {
-                if(indexes[key] < unchangebleRecords)
+                if (indexes[key] < unchangebleRecords)
                     throw new ArgumentException($"Property with {JsonSerializer.Serialize(key)} is unchangeble.");
                 dictionary.Remove(key);
                 var index = indexes[key];

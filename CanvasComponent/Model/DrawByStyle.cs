@@ -1,14 +1,11 @@
 ﻿using CanvasComponent.Abstract;
 using CanvasComponent.Drawing;
 using CanvasComponent.Enums;
-using CanvasComponent.EventArguments;
 using CanvasComponent.Extensions;
 using Microsoft.AspNetCore.Components.Web;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CanvasComponent.Model
 {
@@ -31,7 +28,7 @@ namespace CanvasComponent.Model
             }
         }
 
-        internal protected override DrawingBase CurrentStyle { get => DrawingStyles.GetChangable(selectedDrawingStyle); }
+        internal protected override DrawingBase CurrentStyle { get => drawingStyles.GetChangable(selectedDrawingStyle); }
 
 
         public DrawByStyle()
@@ -39,17 +36,17 @@ namespace CanvasComponent.Model
             CurrentStyle.NewLines += OnNewLines;
         }
 
-        internal protected override 
-            PartialReadOnlyDictionary<NamedValue<int>, DrawingBase, int> DrawingStyles { get; } = new(3)
+        private PartialReadOnlyDictionary<INamedValue<int>, DrawingBase, int> drawingStyles = new(3)
             {
-                { new("Draw as straight line", (int)DrawingStyle.StraightLine), new StraightLine() },
-                { new("Draw as polygon", (int)DrawingStyle.Polygon), new Polygon() },
-                { new("Draw as Rectangle", (int)DrawingStyle.Rectangle), new Rectangle() },
+                { new NamedValue<int>("Draw as straight line", (int) DrawingStyle.StraightLine), new StraightLine() },
+                { new NamedValue<int>("Draw as polygon", (int) DrawingStyle.Polygon), new Polygon() },
+                { new NamedValue<int>("Draw as Rectangle", (int)DrawingStyle.Rectangle), new Rectangle() },
             };
-        
+        protected internal override IDictionary<INamedValue<int>, DrawingBase> DrawingStyles { get => drawingStyles; }
+
         public override void MouseDown(MouseEventArgs e)
         {
-            Point point = snapedPoint(e);
+            Point point = SnapedPoint(e);
             if (LastPoint != default)
             {
                 CurrentStyle.OnMouseDown(LastPoint, point);
@@ -76,22 +73,22 @@ namespace CanvasComponent.Model
         {
             if (CurrentStyle.ContinueDrawing)
             {
-                Point point = snapedPoint(e);
+                Point point = SnapedPoint(e);
                 Lines = Lines.ReplaceLasts(CurrentStyle.OnMouseMove(LastPoint, point));
                 OnDraw();
             }
         }
 
-        private Point snapedPoint(MouseEventArgs e)
+        private Point SnapedPoint(MouseEventArgs e)
         {
             if (SnapToGrid)
-                return new(closestMultiplier(e.ClientX), closestMultiplier(e.ClientY));
+                return new(ClosestMultiplier(e.ClientX), ClosestMultiplier(e.ClientY));
 
             return new(e.ClientX, e.ClientY);
         }
 
-        private double closestMultiplier(double number)
-            => number - ((number % GridSize > GridSize / 2) ? (number % GridSize - GridSize)  : number % GridSize);
+        private double ClosestMultiplier(double number)
+            => number - ((number % GridSize > GridSize / 2) ? (number % GridSize - GridSize) : number % GridSize);
 
         public override void Clear()
         {

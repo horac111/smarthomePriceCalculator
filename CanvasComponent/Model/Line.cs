@@ -1,9 +1,5 @@
 ﻿using CanvasComponent.Extensions;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CanvasComponent.Model
 {
@@ -20,26 +16,26 @@ namespace CanvasComponent.Model
         public Point End { get; internal protected set; }
 
         public virtual double DistanceFromLine(Point point)
-        => Math.Abs((End.X - Start.X) * (Start.Y - point.Y) - 
+        => Math.Abs((End.X - Start.X) * (Start.Y - point.Y) -
             (Start.X - point.X) * (End.Y - Start.Y)) /
             Math.Sqrt(Math.Pow(End.X - Start.X, 2) + Math.Pow(End.Y - Start.Y, 2));
 
         public virtual Point PerpendicularPoint(Point point)
         {
-            getEquation(out double a, out double b, out double c);
+            GetEquation(out double a, out double b, out double c);
             double temp = -2 * (a * point.X + b * point.Y + c) /
                                (a * a + b * b);
-            double x = (temp * a + point.X) ;
-            double y = (temp * b +  point.Y) ;
-            return (new Point(x, y) + point) /2;
+            double x = (temp * a + point.X);
+            double y = (temp * b + point.Y);
+            return (new Point(x, y) + point) / 2;
         }
 
         public virtual Point Intersection(Line line)
         {
-            if(line.Start == Start || line.Start == End || line.End == Start || line.End == End)
+            if (line.Start == Start || line.Start == End || line.End == Start || line.End == End)
                 return default;
-            getEquation(out double a, out double b, out double c);
-            line.getEquation(out double d, out double e, out double f);
+            GetEquation(out double a, out double b, out double c);
+            line.GetEquation(out double d, out double e, out double f);
 
             double determinant = a * e - d * b;
             if (determinant.NearlyEqual(0))
@@ -100,7 +96,7 @@ namespace CanvasComponent.Model
             if (above.Y.NearlyEqual(point.Y) || bellow.Y.NearlyEqual(point.Y))
                 point = new(point.X, point.Y + DoubleExtensions.Epsilon);
 
-            if (point.Y.NearlyLesser(bellow.Y) || point.Y.NearlyGreater(above.Y) || 
+            if (point.Y.NearlyLesser(bellow.Y) || point.Y.NearlyGreater(above.Y) ||
                 point.X.NearlyGreater(Math.Max(above.X, bellow.X)))
                 return false;
 
@@ -125,7 +121,7 @@ namespace CanvasComponent.Model
         public virtual double Length()
             => Start.Distance(End);
 
-        private void getEquation(out double a, out double b, out double c)
+        private void GetEquation(out double a, out double b, out double c)
         {
             a = End.Y - Start.Y;
             b = End.X - Start.X;
@@ -135,7 +131,7 @@ namespace CanvasComponent.Model
 
         public virtual bool IsPointOnExtendedLine(Point point)
         {
-            getEquation(out double a, out double b, out double c);
+            GetEquation(out double a, out double b, out double c);
             return (a * point.X + b * point.Y + c).NearlyEqual(0);
         }
 

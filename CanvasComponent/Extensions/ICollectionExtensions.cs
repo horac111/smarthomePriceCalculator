@@ -1,5 +1,4 @@
-﻿using CanvasComponent.Model;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 
 namespace CanvasComponent.Extensions
 {
@@ -9,7 +8,7 @@ namespace CanvasComponent.Extensions
         {
             if (toAdd is null)
                 return;
-            foreach(T item in toAdd)
+            foreach (T item in toAdd)
                 collection.Add(item);
         }
     }

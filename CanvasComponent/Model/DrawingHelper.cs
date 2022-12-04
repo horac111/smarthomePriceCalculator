@@ -28,7 +28,7 @@ namespace CanvasComponent.Model
 
         public T TransformEventArgs<T>(T e) where T : MouseEventArgs
         {
-            e.ClientX -= Left; 
+            e.ClientX -= Left;
             e.ClientY -= Top;
             return e;
         }

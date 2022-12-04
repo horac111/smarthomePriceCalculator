@@ -1,12 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace CanvasComponent.Abstract
+﻿namespace CanvasComponent.Abstract
 {
-    public interface INamedValued<T>
+    public interface INamedValue<T>
     {
         T Value { get; }
 

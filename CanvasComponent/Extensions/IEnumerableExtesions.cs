@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CanvasComponent.Extensions
 {
@@ -14,20 +12,20 @@ namespace CanvasComponent.Extensions
             int count = 0;
             foreach (Line line in lines)
             {
-                if(line.IsPointOnLine(point))
+                if (line.IsPointOnLine(point))
                     return true;
-                if(line.RayIntersect(point))
+                if (line.RayIntersect(point))
                     count++;
             }
             return count % 2 == 1;
         }
 
         public static Point SelectPointInside(this IEnumerable<Line> lines, IEnumerable<Point> points)
-        =>  points.FirstOrDefault(x => lines.ContainsPoint(x));
+        => points.FirstOrDefault(x => lines.ContainsPoint(x));
 
         public static Line ClosestLine(this IEnumerable<Line> lines, Point point)
         {
-            if(point == default)
+            if (point == default)
                 return null;
             Line closest = null;
             double closestDistance = double.PositiveInfinity;
@@ -51,7 +49,7 @@ namespace CanvasComponent.Extensions
             double[] distances = points.Select(x => double.PositiveInfinity).ToArray();
             foreach (var line in lines)
             {
-                for(int i = 0; i < result.Length; i++)
+                for (int i = 0; i < result.Length; i++)
                 {
                     var currentDistance = line.DistanceFromLine(points[i]);
                     if (currentDistance.NearlyGreater(0) && currentDistance.NearlyLesser(maxDistance) &&
@@ -62,7 +60,7 @@ namespace CanvasComponent.Extensions
                         distances[i] = currentDistance;
                     }
                 }
-                
+
             }
             return result;
         }

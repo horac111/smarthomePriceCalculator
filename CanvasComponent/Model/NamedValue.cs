@@ -1,13 +1,9 @@
 ﻿using CanvasComponent.Abstract;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CanvasComponent.Model
 {
-    public class NamedValue<T> : INamedValued<T>, IEquatable<T>, IEquatable<NamedValue<T>> where T : struct
+    public class NamedValue<T> : INamedValue<T>, IEquatable<T>, IEquatable<NamedValue<T>> where T : struct
     {
         public NamedValue() { }
 
@@ -32,6 +28,6 @@ namespace CanvasComponent.Model
             return Value.GetHashCode();
         }
 
-        
+
     }
 }

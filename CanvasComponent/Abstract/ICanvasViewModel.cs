@@ -1,5 +1,4 @@
-﻿using CanvasComponent.Abstract;
-using CanvasComponent.EventArguments;
+﻿using CanvasComponent.EventArguments;
 using CanvasComponent.Model;
 using Excubo.Blazor.Canvas;
 using Microsoft.AspNetCore.Components.Web;
@@ -11,13 +10,13 @@ using System.Threading.Tasks;
 namespace CanvasComponent.Abstract
 {
     public delegate Task NewRoomDelegate(object sender, NewRoomEventArgs e);
-    public interface ICanvasViewModel: INotifyPropertyChanged
+    public interface ICanvasViewModel : INotifyPropertyChanged
     {
         double AutoComplete { get; set; }
         Canvas Canvas { get; set; }
         IEnumerable<ISmartDevice> Devices { get; init; }
         IDrawingHelper DrawingHelper { get; set; }
-        IEnumerable<INamedValued<int>> DrawingTypes { get; }
+        IEnumerable<INamedValue<int>> DrawingTypes { get; }
         double GridSize { get; set; }
         IEnumerable<Room> Rooms { get; }
         int SelectedStyle { get; set; }

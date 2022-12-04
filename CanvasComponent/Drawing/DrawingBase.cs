@@ -3,9 +3,6 @@ using CanvasComponent.EventArguments;
 using CanvasComponent.Model;
 using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CanvasComponent.Drawing
 {
@@ -18,13 +15,13 @@ namespace CanvasComponent.Drawing
         public virtual void OnMouseDown(Point lastPoint, Point current)
         {
             var lines = OnMouseMove(lastPoint, current);
-            onNewLines(lines);
+            OnNewLines(lines);
             ContinueDrawing = false;
         }
 
         public abstract List<Line> OnMouseMove(Point lastPoint, Point current);
 
-        protected void onNewLines(IEnumerable<Line> lines)
+        protected void OnNewLines(IEnumerable<Line> lines)
             => NewLines?.Invoke(this, new NewLinesEventArgs(lines));
     }
 }

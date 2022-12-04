@@ -1,5 +1,4 @@
 ﻿using CanvasComponent.Drawing;
-using CanvasComponent.Enums;
 using CanvasComponent.EventArguments;
 using CanvasComponent.Model;
 using Microsoft.AspNetCore.Components.Web;
@@ -21,7 +20,7 @@ namespace CanvasComponent.Abstract
 
         protected virtual Point LastPoint { get; set; }
 
-        internal protected virtual PartialReadOnlyDictionary<NamedValue<int>, DrawingBase, int> DrawingStyles { get; }
+        internal protected virtual IDictionary<INamedValue<int>, DrawingBase> DrawingStyles { get; }
 
         public event EventHandler Draw;
         public event EventHandler<NewLinesEventArgs> NewLines;

@@ -1,8 +1,4 @@
-﻿using Microsoft.AspNetCore.Components.Server.Circuits;
-using System;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.IO;
+﻿using System.Collections.Generic;
 using System.Linq;
 
 namespace CanvasComponent.Model
@@ -10,28 +6,28 @@ namespace CanvasComponent.Model
     public class Graph
     {
         private Dictionary<Point, bool> blocked;
-        Dictionary<Point, HashSet<Point>> blockChain;
-        Dictionary<Point, List<Point>> scc;
-        Point root;
-        Stack<Point> path = new();
-        List<List<Point>> cycles = new();
+        private Dictionary<Point, HashSet<Point>> blockChain;
+        private Dictionary<Point, List<Point>> scc;
+        private Point root;
+        private Stack<Point> path = new();
+        private List<List<Point>> cycles = new();
 
         private IEnumerable<Dictionary<Point, List<Point>>> sccs;
 
         public Graph(IList<Line> lines)
         {
-            var graph = createGraph(lines);
+            var graph = CreateGraph(lines);
             sccs = SplitToSCC(graph).ToArray();
         }
 
         public IEnumerable<Room> CreateRooms()
         {
-            foreach(var scc in sccs)
+            foreach (var scc in sccs)
             {
-                blocked = scc.ToDictionary(x => x.Key, x => false); 
+                blocked = scc.ToDictionary(x => x.Key, x => false);
                 blockChain = scc.ToDictionary(x => x.Key, x => new HashSet<Point>());
                 this.scc = scc;
-                foreach(var result in find())
+                foreach (var result in Find())
                     yield return result;
             }
             yield break;
@@ -40,7 +36,7 @@ namespace CanvasComponent.Model
         private void Unblock(Point point)
         {
             blocked[point] = false;
-            foreach(var unblock in blockChain[point])
+            foreach (var unblock in blockChain[point])
             {
                 blockChain[point].Remove(unblock);
                 if (blocked[unblock])
@@ -53,11 +49,11 @@ namespace CanvasComponent.Model
             bool found = false;
             path.Push(point);
             blocked[point] = true;
-            foreach(var nextPoint in scc[point])
+            foreach (var nextPoint in scc[point])
             {
                 if (nextPoint == root)
                 {
-                    if(path.Count > 3)
+                    if (path.Count > 3)
                         cycles.Add(path.ToList());
                     found = true;
                 }
@@ -68,18 +64,18 @@ namespace CanvasComponent.Model
             if (found)
                 Unblock(point);
             else
-                foreach(var key in scc[point])
+                foreach (var key in scc[point])
                     blockChain[key].Add(point);
             path.Pop();
             return found;
         }
 
-        private IEnumerable<Room> find()
+        private IEnumerable<Room> Find()
         {
             foreach (var key in scc.Keys.ToList())
             {
                 root = key;
-                foreach(var toClear in scc.Keys)
+                foreach (var toClear in scc.Keys)
                 {
                     blockChain[toClear].Clear();
                     blocked[toClear] = false;
@@ -97,7 +93,7 @@ namespace CanvasComponent.Model
             cycles.Clear();
         }
 
-        protected virtual Dictionary<Point, List<Point>> createGraph(IList<Line> lines)
+        protected virtual Dictionary<Point, List<Point>> CreateGraph(IList<Line> lines)
         {
             var dict = lines.Select((x, i) => new { line = x, index = i })
                 .ToDictionary(x => x.index, x => new List<Line>() { x.line });
@@ -111,9 +107,9 @@ namespace CanvasComponent.Model
                     if (point != default)
                     {
                         if (firstLine.End != point && firstLine.Start != point)
-                            addToDict(point, dict[i]);
+                            AddToList(point, dict[i]);
                         if (secondLine.End != point && secondLine.Start != point)
-                            addToDict(point, dict[j]);
+                            AddToList(point, dict[j]);
                     }
                 }
             }
@@ -132,7 +128,7 @@ namespace CanvasComponent.Model
             return pairs;
         }
 
-        private void addToDict(Point point, List<Line> lines)
+        private void AddToList(Point point, List<Line> lines)
         {
             for (int i = 0; i < lines.Count; i++)
             {

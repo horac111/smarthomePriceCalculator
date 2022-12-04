@@ -2,10 +2,7 @@
 using CanvasComponent.Extensions;
 using System;
 using System.Collections.Generic;
-using System.Drawing;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace CanvasComponent.Model
 {
@@ -14,9 +11,8 @@ namespace CanvasComponent.Model
         public Room(IEnumerable<Line> lines)
         {
             Lines = lines.ToList().AsReadOnly();
-            Size = calculateSize();
-            Center = calculateCenter();
-
+            Size = CalculateSize();
+            Center = CalculateCenter();
         }
 
         public IReadOnlyList<Line> Lines { get; }
@@ -29,15 +25,13 @@ namespace CanvasComponent.Model
 
         public string Name { get; set; }
 
-        public ICollection<Room> Insiders { get; } = new HashSet<Room>();
-
         public override bool Equals(object obj)
         {
             if (obj is Room room)
             {
                 if (!Center.X.NearlyEqual(room.Center.X)
                    || !Center.Y.NearlyEqual(room.Center.Y))
-                    return false; 
+                    return false;
                 var myPoints = GetAllPoints();
                 var roomPoints = room.GetAllPoints();
                 return myPoints.Count() == roomPoints.Count()
@@ -52,10 +46,10 @@ namespace CanvasComponent.Model
             return HashCode.Combine(Center, GetAllPoints().Sum(x => x.GetHashCode()));
         }
 
-        protected virtual Point calculateCenter()
+        protected virtual Point CalculateCenter()
         {
             var allPoints = GetAllPoints();
-            var centroid = getCentroid(allPoints);
+            var centroid = GetCentroid(allPoints);
             if (centroid != default && Lines.ContainsPoint(centroid))
                 return centroid;
             double x = allPoints.Sum(x => x.X) / allPoints.Count();
@@ -80,9 +74,9 @@ namespace CanvasComponent.Model
             return point;
         }
 
-        private Point getCentroid(IEnumerable<Point> allPoints)
-        { 
-            if(Size == default || allPoints is null || !allPoints.Any())
+        private Point GetCentroid(IEnumerable<Point> allPoints)
+        {
+            if (Size == default || allPoints is null || !allPoints.Any())
                 return default;
 
 
@@ -110,7 +104,7 @@ namespace CanvasComponent.Model
             return new Point(X, Y);
         }
 
-        protected virtual double calculateSize()
+        protected virtual double CalculateSize()
             => Math.Abs(Lines.Sum(x => (x.Start.X + x.End.X) * (x.Start.Y - x.End.Y))) / 2;
 
         public virtual bool Contains(Point point)
@@ -118,7 +112,7 @@ namespace CanvasComponent.Model
 
         public virtual bool Contains(Room room)
         {
-            if(!Lines.ContainsPoint(room.Center))
+            if (!Lines.ContainsPoint(room.Center))
                 return false;
             return room.GetAllPoints().All(x => Lines.ContainsPoint(x));
         }

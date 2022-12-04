@@ -10,7 +10,7 @@ namespace CanvasComponent.Extensions
             double diff = Math.Abs(a - b);
 
             if (a.Equals(b))
-            { 
+            {
                 return true;
             }
             return diff < Epsilon;
