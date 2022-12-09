@@ -7,12 +7,12 @@ namespace CanvasComponent.Model
     {
         private Dictionary<Point, bool> blocked;
         private Dictionary<Point, HashSet<Point>> blockChain;
-        private Dictionary<Point, List<Point>> scc;
+        private Dictionary<Point, HashSet<Point>> scc;
         private Point root;
         private Stack<Point> path = new();
         private List<List<Point>> cycles = new();
 
-        private IEnumerable<Dictionary<Point, List<Point>>> sccs;
+        private IEnumerable<Dictionary<Point, HashSet<Point>>> sccs;
 
         public Graph(IList<Line> lines)
         {
@@ -93,7 +93,7 @@ namespace CanvasComponent.Model
             cycles.Clear();
         }
 
-        protected virtual Dictionary<Point, List<Point>> CreateGraph(IList<Line> lines)
+        protected virtual Dictionary<Point, HashSet<Point>> CreateGraph(IList<Line> lines)
         {
             var dict = lines.Select((x, i) => new { line = x, index = i })
                 .ToDictionary(x => x.index, x => new List<Line>() { x.line });
@@ -113,17 +113,17 @@ namespace CanvasComponent.Model
                     }
                 }
             }
-            Dictionary<Point, List<Point>> pairs = new();
+            Dictionary<Point, HashSet<Point>> pairs = new();
             foreach (var line in dict.SelectMany(x => x.Value))
             {
                 if (pairs.ContainsKey(line.Start))
                     pairs[line.Start].Add(line.End);
                 else
-                    pairs.Add(line.Start, new List<Point>() { line.End });
+                    pairs.Add(line.Start, new HashSet<Point>() { line.End });
                 if (pairs.ContainsKey(line.End))
                     pairs[line.End].Add(line.Start);
                 else
-                    pairs.Add(line.End, new List<Point>() { line.Start });
+                    pairs.Add(line.End, new HashSet<Point>() { line.Start });
             }
             return pairs;
         }
@@ -143,7 +143,7 @@ namespace CanvasComponent.Model
             }
         }
 
-        private IEnumerable<Dictionary<Point, List<Point>>> SplitToSCC(Dictionary<Point, List<Point>> graph)
+        private IEnumerable<Dictionary<Point, HashSet<Point>>> SplitToSCC(Dictionary<Point, HashSet<Point>> graph)
         {
             if (graph is null || graph.Count == 0)
                 yield break;

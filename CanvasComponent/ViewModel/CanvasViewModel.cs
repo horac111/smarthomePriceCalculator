@@ -264,7 +264,8 @@ namespace CanvasComponent.ViewModel
             e = DrawingHelper.TransformEventArgs(e);
             var droppedPoint = new Point(e.ClientX, e.ClientY);
             var possibleRooms = Rooms.Where(x => x.Contains(droppedPoint));
-            var room = Rooms.FirstOrDefault(x => possibleRooms.All(y => y == x || !y.Contains(x)));
+            var room = possibleRooms/*.Where(x => !possibleRooms.Any(y => y.Contains(x)))*/
+                .OrderBy(x => x.Size).FirstOrDefault();
             var currentDragged = dragAndDrop.OnDrop(zone);
             if (room is not null && currentDragged != default)
             {
