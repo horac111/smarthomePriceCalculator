@@ -100,7 +100,7 @@ namespace CanvasComponent.ViewModel
             {
                 drawing.Release();
             }
-            await Draw();
+            await Draw(1000);
         }
 
         public CanvasViewModel(IEnumerable<ISmartDevice> devices) : this(new DrawByStyle(), new RoomsCreator(), devices)
@@ -137,21 +137,22 @@ namespace CanvasComponent.ViewModel
             if (firstTime)
             {
                 ctx = await Canvas.GetContext2DAsync();
+                drawing = new(1, 1);
                 await ctx.LineJoinAsync(LineJoin.Round);
                 await ctx.LineCapAsync(LineCap.Round);
                 if (DrawingHelper is null)
                     DrawingHelper = new DrawingHelper(0, 0, 0, 0);
-                await Draw();
+                await Draw(1000);
             }
 
         }
 
-        private async Task Draw()
+        private async Task Draw(int wait = 5)
         {
             if (ctx is null)
                 return;
 
-            if (!await drawing.WaitAsync(5))
+            if (!await drawing.WaitAsync(wait))
                 return;
 
             Batch2D batch = null;
@@ -163,16 +164,16 @@ namespace CanvasComponent.ViewModel
                 await ClearCanvas(batch);
 
                 foreach (var line in roomsCreator.LinesWithoutRoom)
-                    await drawLine(line, "Black", batch);
+                    await DrawLine(line, "Black", batch);
 
                 foreach (var line in drawByStyle.Lines)
-                    await drawLine(line, "Red", batch, true);
+                    await DrawLine(line, "Red", batch, true);
 
                 foreach (var room in Rooms)
                     await DrawRoom(room, batch);
 
                 if (ShowGrid)
-                    await addGrid(batch);
+                    await AddGrid(batch);
             }
             finally
             {
@@ -191,16 +192,16 @@ namespace CanvasComponent.ViewModel
             try
             {
                 foreach (var line in room.Lines)
-                    await drawLine(line, color, disposableBatch, true);
+                    await DrawLine(line, color, disposableBatch, true);
 
-                Line cross = new(new(room.Center.X - 5, room.Center.Y - 5), new(room.Center.X + 5, room.Center.Y + 5));
+                /*Line cross = new(new(room.Center.X - 5, room.Center.Y - 5), new(room.Center.X + 5, room.Center.Y + 5));
                 await drawLine(cross, "Blue", disposableBatch);
                 cross = new(new(room.Center.X + 5, room.Center.Y - 5), new(room.Center.X - 5, room.Center.Y + 5));
-                await drawLine(cross, "Blue", disposableBatch);
+                await drawLine(cross, "Blue", disposableBatch);*/
                 var dict = Devices.ToDictionary(x => x.Id, x => x.Icon);
                 var center = room.Center;
                 if (!string.IsNullOrEmpty(room.Name))
-                    await disposableBatch.StrokeTextAsync(room.Name, center.X, center.Y);
+                    await disposableBatch.StrokeTextAsync(room.Name, center.X - 50, center.Y - 20);
                 center = new(center.X - (room.Devices.Count / 2 * 33), center.Y + 20);
                 foreach (var device in room.Devices)
                 {
@@ -215,7 +216,7 @@ namespace CanvasComponent.ViewModel
             }
         }
 
-        private async Task drawLine(Line line, string color, Batch2D batch, bool showLength = false)
+        private async Task DrawLine(Line line, string color, Batch2D batch, bool showLength = false)
         {
             await batch.StrokeStyleAsync(color);
             await batch.BeginPathAsync();
@@ -232,12 +233,12 @@ namespace CanvasComponent.ViewModel
             await batch.ClearRectAsync(0, 0, DrawingHelper.Width, DrawingHelper.Height);
         }
 
-        private async Task addGrid(Batch2D batch)
+        private async Task AddGrid(Batch2D batch)
         {
             for (double i = 0; i < DrawingHelper.Width; i += GridSize)
-                await drawLine(new(new(i, 0), new(i, DrawingHelper.Height)), "Black", batch);
+                await DrawLine(new(new(i, 0), new(i, DrawingHelper.Height)), "Black", batch);
             for (double i = 0; i < DrawingHelper.Height; i += GridSize)
-                await drawLine(new(new(0, i), new(DrawingHelper.Width, i)), "Black", batch);
+                await DrawLine(new(new(0, i), new(DrawingHelper.Width, i)), "Black", batch);
         }
 
         public void OnMouseDown(MouseEventArgs e)
