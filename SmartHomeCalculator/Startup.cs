@@ -47,7 +47,7 @@ namespace SmartHomeCalculator
                 {
                     Id = 2,
                     BasePrice = 10,
-                    PriceForWiring = 10,
+                    Price = 10,
                     Icon = icon
                 },
                 new DevicesPerRoomSmartDevice()
