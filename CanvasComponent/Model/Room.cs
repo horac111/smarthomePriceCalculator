@@ -128,9 +128,9 @@ namespace CanvasComponent.Model
          => Lines.SelectMany(x => new[] { x.Start, x.End }).Distinct();
 
         public static bool operator ==(Room first, Room second)
-         => first.Equals(second);
+         => first is not null ? first.Equals(second) : second is null;
 
         public static bool operator !=(Room first, Room second)
-         => !first.Equals(second);
+         => first is not null ? !first.Equals(second) : second is null;
     }
 }

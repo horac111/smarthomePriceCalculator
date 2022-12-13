@@ -49,6 +49,7 @@ namespace SmartHomeCalculator
                     Price = 10,
                     DevicesInRoom = 2,
                     Icon = icon,
+                    IsCentralUnit = true
                 }
             };
 

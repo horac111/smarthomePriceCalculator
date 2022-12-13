@@ -52,14 +52,14 @@ namespace CanvasComponent.ViewModel
             get => roomsCreator.Rooms;
         }
 
-        public IEnumerable<ISmartDevice> Devices { get; init; }
+        public Room ContainsCentralUnit { get; set; }
+        public IEnumerable<ISmartDevice> Devices { get; private set; }
 
         private DragAndDropService<ISmartDevice> dragAndDrop { get; init; }
 
         public double TotalPrice
         {
-            get =>
-                Rooms.Sum(x => x.Devices.Sum(y => y.DeterminPrice(DrawingHelper.ToMetersSquared(x.Size))));
+            get => CalculateTotalPrice();
         }
 
         public bool ShowGrid { get; set; }
@@ -272,6 +272,13 @@ namespace CanvasComponent.ViewModel
             {
                 room.Devices.Add(currentDragged);
                 OnPropertyChanged(nameof(TotalPrice));
+                if (currentDragged.IsCentralUnit)
+                {
+                    ContainsCentralUnit = room;
+                    foreach (var device in Devices)
+                        device.IsVisible = !device.IsCentralUnit;
+                }
+
             }
             await Draw();
         }
@@ -280,6 +287,27 @@ namespace CanvasComponent.ViewModel
         {
             if (e.Key == "Escape")
                 drawByStyle.Clear();
+        }
+
+        private double CalculateTotalPrice()
+        {
+            double price = 0;
+            foreach(var room in Rooms)
+            {
+                foreach(var device in room.Devices)
+                {
+                    double sizeParam;
+                    if ((ContainsCentralUnit is null || room == ContainsCentralUnit) && device.WiringFromCentralUnit)
+                        sizeParam = DrawingHelper.ToMeters(room.Lines.Max(x => x.Length()));
+                    else if (device.WiringFromCentralUnit)
+                        sizeParam = DrawingHelper.ToMeters(Math.Abs(room.Center.X - ContainsCentralUnit.Center.X) +
+                            Math.Abs(room.Center.Y - ContainsCentralUnit.Center.Y));
+                    else
+                        sizeParam = DrawingHelper.ToMetersSquared(room.Size);
+                    price += device.DeterminPrice(sizeParam);
+                }
+            }
+            return price;
         }
     }
 }

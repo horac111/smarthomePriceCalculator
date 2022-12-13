@@ -9,6 +9,9 @@ namespace CanvasComponent.Abstract
         public string Icon { get; init; }
         public double Price { get; init; }
         public double BasePrice { get; init; }
+        public bool WiringFromCentralUnit { get; set; }
+        public bool IsCentralUnit { get; set; }
+        public bool IsVisible { get; set; } = true;
 
         public virtual double DeterminPrice(double size)
             => BasePrice;

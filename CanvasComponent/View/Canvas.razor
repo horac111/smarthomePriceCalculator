@@ -15,8 +15,12 @@
         <div dropzone="move" class="justify-content-center align-content-center" style="width: 32px">
             @foreach (var device in viewModel.Devices)
             {
-                <img src="@device.Icon" height="32" width="32" draggable="true"
-                    @ondragstart="@(e => viewModel.OnDragStart(device, "CanvasContainer"))" />
+                if(device.IsVisible)
+                {
+                    <img src="@device.Icon" height="32" width="32" draggable="true"
+                        @ondragstart="@(e => viewModel.OnDragStart(device, "CanvasContainer"))" />
+                }
+                
                 <img id="@("img" + device.Id)" height="32" width="32" style="display:none" src="@device.Icon" />
             }
         </div>

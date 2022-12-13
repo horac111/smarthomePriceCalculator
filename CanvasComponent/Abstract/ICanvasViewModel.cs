@@ -14,7 +14,7 @@ namespace CanvasComponent.Abstract
     {
         double AutoComplete { get; set; }
         Canvas Canvas { get; set; }
-        IEnumerable<ISmartDevice> Devices { get; init; }
+        IEnumerable<ISmartDevice> Devices { get; }
         IDrawingHelper DrawingHelper { get; set; }
         IEnumerable<INamedValue<int>> DrawingTypes { get; }
         double GridSize { get; set; }

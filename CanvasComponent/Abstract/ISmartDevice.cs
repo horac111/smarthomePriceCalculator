@@ -2,6 +2,9 @@
 {
     public interface ISmartDevice : IDragable
     {
+        bool WiringFromCentralUnit { get; set; }
+        bool IsCentralUnit { get; set; }
+        bool IsVisible { get; set; }
         public static int PriceRounding { get; set; } = 2;
         int Id { get; }
         string Icon { get; init; }
