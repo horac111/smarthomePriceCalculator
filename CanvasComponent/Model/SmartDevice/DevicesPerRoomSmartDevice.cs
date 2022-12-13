@@ -7,7 +7,7 @@ namespace CanvasComponent.Model.SmartDevice
     {
 
         public int DevicesInRoom { get; init; }
-        public override double DeterminPrice(double size)
-         => Math.Round(base.DeterminPrice(size) + DevicesInRoom * Price, ISmartDevice.PriceRounding);
+        public override double DeterminPrice(double size, double wiring)
+         => Math.Round(base.DeterminPrice(size, wiring) + DevicesInRoom * Price, ISmartDevice.PriceRounding);
     }
 }

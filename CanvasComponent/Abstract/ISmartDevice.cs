@@ -2,7 +2,6 @@
 {
     public interface ISmartDevice : IDragable
     {
-        bool WiringFromCentralUnit { get; set; }
         bool IsCentralUnit { get; set; }
         bool IsVisible { get; set; }
         public static int PriceRounding { get; set; } = 2;
@@ -12,6 +11,6 @@
 
         double BasePrice { get; init; }
 
-        double DeterminPrice(double size);
+        double DeterminPrice(double size, double wiring);
     }
 }

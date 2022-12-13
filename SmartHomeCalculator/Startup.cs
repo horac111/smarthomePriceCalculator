@@ -43,9 +43,16 @@ namespace SmartHomeCalculator
                     DevicesPerMeter = 3,
                     Icon = icon,
                 },
+                new WiredFromCentralUnitSmartDevice()
+                {
+                    Id = 2,
+                    BasePrice = 10,
+                    PriceForWiring = 10,
+                    Icon = icon
+                },
                 new DevicesPerRoomSmartDevice()
                 {
-                    Id = 10,
+                    Id = 3,
                     Price = 10,
                     DevicesInRoom = 2,
                     Icon = icon,

@@ -8,8 +8,8 @@ namespace CanvasComponent.Model.SmartDevice
 
         public double DevicesPerMeter { get; init; }
 
-        public override double DeterminPrice(double size)
-            => Math.Round(base.DeterminPrice(size) + ((int)(size * DevicesPerMeter) +
+        public override double DeterminPrice(double size, double wiring)
+            => Math.Round(base.DeterminPrice(size, wiring) + ((int)(size * DevicesPerMeter) +
                 ((size % DevicesPerMeter == 0) ? 0 : 1)) * Price
                 , ISmartDevice.PriceRounding);
     }

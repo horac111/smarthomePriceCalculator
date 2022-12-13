@@ -296,15 +296,13 @@ namespace CanvasComponent.ViewModel
             {
                 foreach(var device in room.Devices)
                 {
-                    double sizeParam;
-                    if ((ContainsCentralUnit is null || room == ContainsCentralUnit) && device.WiringFromCentralUnit)
-                        sizeParam = DrawingHelper.ToMeters(room.Lines.Max(x => x.Length()));
-                    else if (device.WiringFromCentralUnit)
-                        sizeParam = DrawingHelper.ToMeters(Math.Abs(room.Center.X - ContainsCentralUnit.Center.X) +
-                            Math.Abs(room.Center.Y - ContainsCentralUnit.Center.Y));
+                    double wiring;
+                    if ((ContainsCentralUnit is null || room == ContainsCentralUnit))
+                        wiring = DrawingHelper.ToMeters(room.Lines.Max(x => x.Length()));
                     else
-                        sizeParam = DrawingHelper.ToMetersSquared(room.Size);
-                    price += device.DeterminPrice(sizeParam);
+                        wiring = DrawingHelper.ToMeters(Math.Abs(room.Center.X - ContainsCentralUnit.Center.X) +
+                            Math.Abs(room.Center.Y - ContainsCentralUnit.Center.Y));
+                    price += device.DeterminPrice(DrawingHelper.ToMetersSquared(room.Size), wiring);
                 }
             }
             return price;
