@@ -1,73 +1,43 @@
 ﻿@using CanvasComponent.Abstract
-@using CanvasComponent.ViewModel
+@using CanvasComponent.Facade
+@using Microsoft.Fast.Components.FluentUI
 @inject IJSRuntime js
 
-<div class="container h-100 w-100 mw-100 mh-100 m-0">
-    <div class="row justify-content-start h-100 w-100 m-0">
-        <div id="CanvasContainer" class="p-0 m-0" style="width: calc(100% - 40px)" dropzone="move" ondragover="event.preventDefault()">
-            <Excubo.Blazor.Canvas.Canvas tabindex="0" width="@(viewModel.DrawingHelper?.Width ?? 0)"
-                                         height="@(viewModel.DrawingHelper?.Height ?? 0)"
-                                         @onmousemove="@viewModel.OnMouseMove" @onmousedown="@viewModel.OnMouseDown"
-                                         @ondrop="@(e => viewModel.OnDragDrop(e, "CanvasContainer"))"
-                                         @ref="viewModel.Canvas" draggable="false" @onkeydown="@viewModel.OnKeyDown" />
+<div class="container h-100 w-100 mw-100 mh-100 m-0 d-flex flex-column p-0">
+    <div class="justify-content-start m-0 flex-grow-1 d-flex flex-row">
+        <div id="CanvasContainer" class="p-0 m-0 border-accent flex-grow-1" dropzone="move" ondragover="event.preventDefault()">
+            <Excubo.Blazor.Canvas.Canvas tabindex="0" width="@(Facade.DrawingHelper?.Width ?? 0)"
+                                         height="@(Facade.DrawingHelper?.Height ?? 0)"
+                                         @onmousemove="@Facade.OnMouseMove" @onmousedown="@Facade.OnMouseDown"
+                                         @ondrop="@(e => Facade.OnDragDrop(e, "CanvasContainer"))"
+                                         @ref="Facade.Canvas" draggable="false" @onkeydown="@Facade.OnKeyDown" />
         </div>
 
-        <div dropzone="move" class="justify-content-center align-content-center" style="width: 32px">
-            @foreach (var device in viewModel.Devices)
+        <div dropzone="move" class="border-accent  align-content-center d-flex flex-column flex-wrap">
+            @foreach (var device in Facade.Devices)
             {
                 if(device.IsVisible)
                 {
-                    <img src="@device.Icon" height="32" width="32" draggable="true"
-                        @ondragstart="@(e => viewModel.OnDragStart(device, "CanvasContainer"))" />
+                    <img src="@device.Icon" class="m-1" id="@device.Id" height="32" width="32" draggable="true"
+                        @ondragstart="@(e => Facade.OnDragStart(device, "CanvasContainer"))" />
+                    <FluentTooltip Anchor="@device.Id.ToString()" Position="TooltipPosition.Left" Delay="200">@device.Name</FluentTooltip>
                 }
                 
                 <img id="@("img" + device.Id)" height="32" width="32" style="display:none" src="@device.Icon" />
             }
         </div>
     </div>
-    <footer class="row justify-content-center">
-        <div class="col-3">
-            <label>Price:</label> <label>@viewModel.TotalPrice</label>
+    <div class="d-flex border-accent ">
+        <div class="justify-self-start  justify-content-start">
+            <FluentButton Appearance="Appearance.Neutral" Disabled="!Facade.CanStepBackward" Class="z-2 m-1 position-absolute" @onclick="() => Facade.OnStep(false)">
+                    <FluentIcon Name="@FluentIcons.ArrowLeft" Size="@IconSize.Size24" Variant="@IconVariant.Filled" Color="@Color.Accent" />
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Neutral" Disabled="!Facade.CanStepForward" Class="z-2 m-1 position-absolute" @onclick="() => Facade.OnStep(true)">
+                <FluentIcon Name="@FluentIcons.ArrowRight" Size="@IconSize.Size24" Variant="@IconVariant.Filled" Color="@Color.Accent" />
+            </FluentButton>
         </div>
-    </footer>
+        <div class="justify-self-center ">
+            <label>Price:</label> <label>@Facade.TotalPrice</label>
+        </div>
+    </div>
 </div>
-
-
-
-@code {
-    [Parameter]
-    public ICanvasViewModel viewModel { get; init; }
-
-    [CascadingParameter] 
-    public IModalService Modal { get; set; }
-
-    protected override void OnInitialized()
-    {
-        viewModel.PropertyChanged += (s, e) => InvokeAsync(StateHasChanged);
-        viewModel.NewRoom += async (s, e) =>
-        {
-            await InvokeAsync(async () =>
-            {
-                ModalParameters param = new();
-                param.Add(nameof(InputText.room), e.Room);
-                var modal = Modal.Show<InputText>("Naming room.", param, new() { Position = ModalPosition.BottomLeft, DisableBackgroundCancel = false });
-                var result = await modal.Result;
-            });
-
-
-        };
-        base.OnInitialized();
-    }
-    protected override async void OnAfterRender(bool firstRender)
-    {
-        if(firstRender)
-        {
-            var rect = await js.InvokeAsync<BoundingClientRect>("eval",
-              $"let e = document.querySelector(\"#CanvasContainer\"); e = e.getBoundingClientRect();  e");
-            viewModel.DrawingHelper = new DrawingHelper(rect);
-        }
-        
-        await viewModel.OnAfterRender(firstRender);
-        base.OnAfterRender(firstRender);
-    }
-}

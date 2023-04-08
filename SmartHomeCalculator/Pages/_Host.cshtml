@@ -1,4 +1,6 @@
 ﻿@page "/"
+@using Microsoft.AspNetCore.Components.Web;
+@using Microsoft.Fast.Components.FluentUI;
 @using SmartHomeCalculator
 @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 @{
@@ -20,21 +22,28 @@
 
     <script src="_content/Blazor.Extensions.Canvas/blazor.extensions.canvas.js"></script>
     <script src="_content/Blazored.Modal/blazored.modal.js"></script>
+    <link href="SmartHomeCalculator.styles.css" rel="stylesheet" />
+    <link href="_content/Microsoft.Fast.Components.FluentUI/css/reboot.css" rel="stylesheet" />
+    <component type="typeof(HeadOutlet)" render-mode="ServerPrerendered" />
 </head>
 <body>
-    <component type="typeof(App)" render-mode="ServerPrerendered" />
+   
+        <component type="typeof(App)" render-mode="ServerPrerendered" />
 
-    <div id="blazor-error-ui">
-        <environment include="Staging,Production">
-            An error has occurred. This application may no longer respond until reloaded.
-        </environment>
-        <environment include="Development">
-            An unhandled exception has occurred. See browser dev tools for details.
-        </environment>
-        <a href="" class="reload">Reload</a>
-        <a class="dismiss">🗙</a>
-    </div>
+        <div id="blazor-error-ui">
+            <environment include="Staging,Production">
+                An error has occurred. This application may no longer respond until reloaded.
+            </environment>
+            <environment include="Development">
+                An unhandled exception has occurred. See browser dev tools for details.
+            </environment>
+            <a href="" class="reload">Reload</a>
+            <a class="dismiss">🗙</a>
+        </div>
 
-    <script src="_framework/blazor.server.js"></script>
+        <script src="_framework/blazor.server.js"></script>
+    <script type="module" src="https://cdn.jsdelivr.net/npm/@@fluentui/web-components/dist/web-components.min.js"></script>
 </body>
 </html>
+
+

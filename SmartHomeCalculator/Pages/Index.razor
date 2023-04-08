@@ -2,66 +2,70 @@
 @using Blazored.Modal.Services
 @using CanvasComponent.Abstract
 @using CanvasComponent.View
-@inject ICanvasViewModel viewModel
+@using SmartHomeCalculator.Components
+@inject ICanvasFacade viewModel
 
 
-<div class="wrapper">
-    <button @onclick="() => show_sidebar ^= true" class="btn btn-primary chevron" style="z-index:2">
-        <i class="fa fa-chevron-circle-@(show_sidebar ? "left" : "right")" /> 
-    </button>
 
-    <nav class="sidebar sidebar-@(show_sidebar ? "show" : "hide")" style="z-index:1">
-        <div class="sidebar-content mt-5">
-            <EditForm Model="viewModel">
-                <div class="row h-auto ">
-                    <InputRadioGroup TValue="int" Name="drawingStyle" @bind-Value="viewModel.SelectedStyle">
+    <div class="wrapper" Appearance="Appearance.Filled">
+        <FluentButton Appearance="Appearance.Neutral" Class="z-2 m-1 position-absolute" @onclick="() => showSidebar ^= true">
+            @if (showSidebar)
+            {
+                <FluentIcon Name="@FluentIcons.ArrowLeft" Size="@IconSize.Size24" Variant="@IconVariant.Filled" Color="@Color.Accent" />
+            }
+            else
+            {
+                <FluentIcon Name="@FluentIcons.ArrowRight" Size="@IconSize.Size24" Variant="@IconVariant.Filled" Color="@Color.Accent" />
+            }
+        </FluentButton>
+        @if (showSidebar)
+        {
+            <FluentCard Appearance="Appearance.Lightweight" Orientation="Orientation.Vertical" Class="w-25 z-1 position-absolute">
+
+                <Stack Orientation="Orientation.Vertical" Class="mt-5 m-1">
+                    <FluentRadioGroup Appearance="@Appearance.Outline" Required="true" Orientation="Orientation.Vertical" @bind-Value="viewModel.SelectedStyle">
                         @foreach (var val in viewModel.DrawingTypes)
                         {
-                            <div class="align-items-center ml-1 mr-1">
-                                <InputRadio @key="@val.Value" Value="@val.Value" Name="drawingStyle" /> <label class="ml-1">@val.Name</label>
-                            </div>
+                            <FluentRadio Value="@val.Value">@val.Name</FluentRadio>
                         }
-                    </InputRadioGroup>
-                </div>
-                <div class="row h-auto align-items-center">
-                    <label class="ml-1 mb-0 mt-1">Grid density: </label>
-                    <input type="number" @bind-value="@viewModel.GridSize" class="form-control form-control-sm" />
-                </div>
-                <div class="row h-auto align-items-center mt-1">
-                    <input type="checkbox" @bind="@viewModel.ShowGrid" class="mb-2" />  <label class="ml-1">Is grid visible </label>
-                </div>
-                <div class="row h-auto align-items-center mt-1">
-                    <input type="checkbox" @bind="@viewModel.SnapToGrid" class="mb-2" />  <label class="ml-1">Snap to grid </label>
-                </div>
-                <div class="row h-auto align-items-center">
-                    <label class="ml-1 mb-0 mt-1">Pixels to close room:</label>
-                    <input type="number" @bind-value="@viewModel.AutoComplete" class="form-control form-control-sm" />
-                </div>
-                <div class="row h-auto align-items-center">
-                    <label class="ml-1 mb-0 mt-1">Line thickness:</label>
-                    <input type="number" @bind-value="@viewModel.Thickness" class="form-control form-control-sm" />
-                </div>
-            </EditForm>
-        </div>
-    </nav>
+                    </FluentRadioGroup>
+                    <FluentDivider Appearance="Appearance.Accent" />
+                    <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@viewModel.GridSize" Min="0"
+                                   Step="1" Required="true">Grid density:</FluentNumberField>
+
+                    <FluentCheckbox Appearance="Appearance.Outline" @bind-Value="@viewModel.ShowGrid">Is grid visible</FluentCheckbox>
+
+                    <FluentCheckbox Appearance="Appearance.Outline" @bind-Value="@viewModel.SnapToGrid">Snap to grid</FluentCheckbox>
+
+                    <FluentDivider Appearance="Appearance.Accent" />
+
+                    <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@viewModel.AutoComplete" Min="0"
+                                   Step="0.25" Required="true">Pixels to close room:</FluentNumberField>
+
+                    <FluentDivider Appearance="Appearance.Accent" />
+
+                    <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@viewModel.Thickness" Min="0.25"
+                                   Step="0.25" Required="true">Line thickness:</FluentNumberField>
+                </Stack>
+            </FluentCard>
+        }
 
 
-    <div class="content">
-        <div class="container-flux h-100">
-            <div class="row m-0 h-100 border border-danger">
-                <Canvas viewModel="@viewModel" />
+        <div class="content">
+            <div class="container-flux h-100">
+                <div class="row m-0 h-100">
+                    <Canvas Facade="@viewModel" />
+                </div>
             </div>
         </div>
     </div>
-</div>
-
-
 
 
 
 @code
 {
-    bool show_sidebar = true;
+    bool showSidebar = true;
+    
 
     protected override void OnInitialized()
     {

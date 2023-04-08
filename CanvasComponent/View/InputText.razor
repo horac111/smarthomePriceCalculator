@@ -1,26 +1,6 @@
-﻿<div class="simple-form">
-    <div class="form-group" @onkeydown="OnKeyDown">
-        <label>Room name:</label>
-        <input type="text" @bind-value="room.Name" />
+﻿<div class="simple-form" >
+    <div class="form-group"  @onkeydown="OnKeyDown">
+        <FluentTextField @ref="testRef" Appearance="Appearance.Outline" @bind-Value="@Room.Name">Room name:</FluentTextField>
     </div>
-    <button class="btn btn-primary"  @onclick="() => ModalInstance.CloseAsync()" >Submit</button>
+    <FluentButton Appearance="Appearance.Neutral" @onclick="() => ModalInstance.CloseAsync()">Submit</FluentButton>
 </div>
-
-@code {
-    [CascadingParameter]
-    BlazoredModalInstance ModalInstance { get; set; }
-
-    [Parameter]
-    public CanvasComponent.Model.Room room { get; init; }
-
-    private void OnKeyDown(KeyboardEventArgs e)
-    {
-        if (e.Code == "Enter" || e.Code == "NumpadEnter")
-            ModalInstance.CloseAsync();
-        else if(e.Code == "Escape")
-        {
-            room.Name = null;
-            ModalInstance.CloseAsync();
-        }
-    }
-}

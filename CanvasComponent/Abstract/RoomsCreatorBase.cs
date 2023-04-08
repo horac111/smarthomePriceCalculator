@@ -1,25 +1,24 @@
 ﻿using CanvasComponent.EventArguments;
+using CanvasComponent.Model;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 
-namespace CanvasComponent.Model
+namespace CanvasComponent.Abstract
 {
-    public abstract class RoomsCreatorBase
+    public abstract class RoomsCreatorBase : NotifyPropertyChanged, IRoomsCreator
     {
-        protected virtual IList<Line> AllLines { get; set; } = new List<Line>();
+        public virtual IEnumerable<Line> AllLines { get; }
 
-        internal protected virtual ICollection<Room> Rooms { get; private set; } = new List<Room>();
+        internal protected double AutoComplete { get; set; } = 5;
 
-        internal IEnumerable<Line> LinesWithoutRoom { get => AllLines.Except(Rooms.SelectMany(x => x.Lines)); }
-
-        internal protected virtual double AutoComplete { get; set; } = 5;
-
-        public event EventHandler<NewRoomsEventArgs> NewRooms;
+        public event EventHandler<RoomsEventArgs> RoomsFound;
 
         protected internal abstract void NewLines(object sender, NewLinesEventArgs e);
 
-        protected virtual void OnNewRooms(IEnumerable<Room> rooms)
-            => NewRooms?.Invoke(this, new(rooms));
+        protected virtual void OnRoomsFound(IEnumerable<Room> rooms)
+            => RoomsFound?.Invoke(this, new(rooms));
+
+        public abstract void OnStep(object sender, StepEventArgs e);
     }
 }

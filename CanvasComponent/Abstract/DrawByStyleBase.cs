@@ -7,16 +7,16 @@ using System.Collections.Generic;
 
 namespace CanvasComponent.Abstract
 {
-    public abstract class DrawByStyleBase : NotifyPropertyChanged
+    public abstract class DrawByStyleBase : NotifyPropertyChanged, IDrawByStyle
     {
         internal protected virtual int SelectedDrawingStyle { get; set; }
         internal protected virtual bool SnapToGrid { get; set; }
 
-        internal protected virtual double GridSize { get; set; }
+        public virtual double GridSize { get; set; } = 50;
 
-        internal protected virtual IEnumerable<Line> Lines { get; set; } = new List<Line>();
+        public virtual IEnumerable<Line> Lines { get; set; } = new List<Line>();
 
-        internal protected virtual DrawingBase CurrentStyle { get; }
+        protected virtual DrawingBase CurrentStyle { get; }
 
         protected virtual Point LastPoint { get; set; }
 

@@ -1,12 +1,17 @@
 using Blazored.Modal;
 using CanvasComponent.Abstract;
+using CanvasComponent.Facade;
+using CanvasComponent.Model;
 using CanvasComponent.Model.SmartDevice;
-using CanvasComponent.ViewModel;
+using CanvasComponent.Service;
+using CanvasComponent.View;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
+using Microsoft.Fast.Components.FluentUI;
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -35,6 +40,7 @@ namespace SmartHomeCalculator
                     Id = 0,
                     Price = 10,
                     Icon = icon,
+                    Name = "10 per meter"
                 },
                 new DevicesPerMeterSmartDevice()
                 {
@@ -42,13 +48,15 @@ namespace SmartHomeCalculator
                     Price = 10,
                     DevicesPerMeter = 3,
                     Icon = icon,
+                    Name = "3 devices per meter"
                 },
                 new WiredFromCentralUnitSmartDevice()
                 {
                     Id = 2,
                     BasePrice = 10,
                     Price = 10,
-                    Icon = icon
+                    Icon = icon,
+                    Name = "from central unit"
                 },
                 new DevicesPerRoomSmartDevice()
                 {
@@ -56,15 +64,23 @@ namespace SmartHomeCalculator
                     Price = 10,
                     DevicesInRoom = 2,
                     Icon = icon,
-                    IsCentralUnit = true
+                    IsCentralUnit = true,
+                    Name = "2 devices in room also cental unit"
                 }
             };
-
+            services.AddServerSideBlazor(option =>
+            {
+                option.RootComponents.RegisterCustomElement<Canvas>("canvas-component");
+            });
             services.AddRazorPages();
-            services.AddServerSideBlazor();
-            services.AddSingleton<ICanvasViewModel, CanvasViewModel>();
+            services.AddScoped<Drawing>();
+            services.AddScoped<ICanvasFacade, CanvasFacade>();
             services.AddSingleton<IEnumerable<ISmartDevice>>(devices);
+            services.AddSingleton<Project>();
             services.AddBlazoredModal();
+            services.AddHttpClient();
+            LibraryConfiguration config = new(ConfigurationGenerator.GetIconConfiguration(), ConfigurationGenerator.GetEmojiConfiguration());
+            services.AddFluentUIComponents(config);
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

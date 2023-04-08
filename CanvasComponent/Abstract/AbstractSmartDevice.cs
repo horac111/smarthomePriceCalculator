@@ -11,6 +11,7 @@ namespace CanvasComponent.Abstract
         public double BasePrice { get; init; }
         public bool IsCentralUnit { get; set; }
         public bool IsVisible { get; set; } = true;
+        public string Name { get; init; }
 
         public virtual double DeterminPrice(double size, double wiring)
             => BasePrice;

@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace CanvasComponent.Abstract
 {
     public delegate Task NewRoomDelegate(object sender, NewRoomEventArgs e);
-    public interface ICanvasViewModel : INotifyPropertyChanged
+    public interface ICanvasFacade : INotifyPropertyChanged
     {
         double AutoComplete { get; set; }
         Canvas Canvas { get; set; }
@@ -24,15 +24,18 @@ namespace CanvasComponent.Abstract
         bool SnapToGrid { get; set; }
         double Thickness { get; set; }
         double TotalPrice { get; }
+        bool CanStepForward { get; }
+        bool CanStepBackward { get; }
 
-        event EventHandler<NewRoomsEventArgs> NewRooms;
+        event EventHandler<RoomsEventArgs> NewRooms;
         NewRoomDelegate NewRoom { get; set; }
         void Dispose();
         Task OnAfterRender(bool firstTime);
-        Task OnDragDrop(DragEventArgs e, string zone);
+        void OnDragDrop(DragEventArgs e, string zone);
         void OnDragStart(ISmartDevice device, string zone);
         void OnMouseDown(MouseEventArgs e);
         void OnMouseMove(MouseEventArgs e);
         void OnKeyDown(KeyboardEventArgs e);
+        void OnStep(bool forward);
     }
 }

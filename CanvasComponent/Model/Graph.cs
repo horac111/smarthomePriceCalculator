@@ -14,7 +14,7 @@ namespace CanvasComponent.Model
 
         private IEnumerable<Dictionary<Point, HashSet<Point>>> sccs;
 
-        public Graph(IList<Line> lines)
+        public Graph(IEnumerable<Line> lines)
         {
             var graph = CreateGraph(lines);
             sccs = SplitToSCC(graph).ToArray();
@@ -93,7 +93,7 @@ namespace CanvasComponent.Model
             cycles.Clear();
         }
 
-        protected virtual Dictionary<Point, HashSet<Point>> CreateGraph(IList<Line> lines)
+        protected virtual Dictionary<Point, HashSet<Point>> CreateGraph(IEnumerable<Line> lines)
         {
             var dict = lines.Select((x, i) => new { line = x, index = i })
                 .ToDictionary(x => x.index, x => new List<Line>() { x.line });
@@ -101,8 +101,8 @@ namespace CanvasComponent.Model
             {
                 for (int j = i + 1; j < lines.Count(); j++)
                 {
-                    var firstLine = lines[i];
-                    var secondLine = lines[j];
+                    var firstLine = lines.ElementAt(i);
+                    var secondLine = lines.ElementAt(j);
                     var point = firstLine.Intersection(secondLine);
                     if (point != default)
                     {

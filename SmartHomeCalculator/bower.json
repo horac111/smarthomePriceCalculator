@@ -11,6 +11,6 @@
   ],
   "license": "MIT",
   "dependencies": {
-    "bootstrap": "v4.6.0"
+    "bootstrap": "v5.2.3"
   }
 }

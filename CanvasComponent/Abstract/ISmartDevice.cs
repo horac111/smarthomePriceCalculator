@@ -7,6 +7,7 @@
         public static int PriceRounding { get; set; } = 2;
         int Id { get; }
         string Icon { get; init; }
+        string Name { get; init; }
         double Price { get; init; }
 
         double BasePrice { get; init; }

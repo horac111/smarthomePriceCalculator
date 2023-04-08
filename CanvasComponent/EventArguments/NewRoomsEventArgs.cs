@@ -4,10 +4,10 @@ using System.Collections.Generic;
 
 namespace CanvasComponent.EventArguments
 {
-    public class NewRoomsEventArgs : EventArgs
+    public class RoomsEventArgs : EventArgs
     {
         public IEnumerable<Room> Rooms { get; }
 
-        public NewRoomsEventArgs(IEnumerable<Room> r) => Rooms = r;
+        public RoomsEventArgs(IEnumerable<Room> r) => Rooms = r;
     }
 }
