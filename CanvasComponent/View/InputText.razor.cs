@@ -2,6 +2,8 @@
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components;
 using Microsoft.Fast.Components.FluentUI;
+using CanvasComponent.Model;
+using CanvasComponent.Abstract;
 
 namespace CanvasComponent.View
 {
@@ -13,7 +15,10 @@ namespace CanvasComponent.View
         private FluentTextField testRef;
 
         [Parameter]
-        public CanvasComponent.Model.Room Room { get; init; }
+        public INamed ToName { get; init; }
+
+        [Parameter]
+        public string Text { get; init; }
 
         private void OnKeyDown(KeyboardEventArgs e)
         {
@@ -21,7 +26,7 @@ namespace CanvasComponent.View
                 ModalInstance.CloseAsync();
             else if (e.Code == "Escape")
             {
-                Room.Name = null;
+                ToName.Name = null;
                 ModalInstance.CloseAsync();
             }
         }

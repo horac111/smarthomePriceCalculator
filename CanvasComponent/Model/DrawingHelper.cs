@@ -1,9 +1,10 @@
 ﻿using CanvasComponent.Abstract;
+using CanvasComponent.Model.JSObjects;
 using Microsoft.AspNetCore.Components.Web;
 
 namespace CanvasComponent.Model
 {
-    public class DrawingHelper : IDrawingHelper
+    internal class DrawingHelper : IDrawingHelper
     {
         public DrawingHelper(double width, double height, double top, double left)
         {

@@ -2,8 +2,11 @@
 using Blazored.Modal.Services;
 using CanvasComponent.Abstract;
 using CanvasComponent.Model;
+using CanvasComponent.Model.JSObjects;
 using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.Components.Web;
 using Microsoft.JSInterop;
+using System.Threading.Tasks;
 
 namespace CanvasComponent.View
 {
@@ -12,24 +15,9 @@ namespace CanvasComponent.View
         [Parameter]
         public ICanvasFacade Facade { get; init; }
 
-        [CascadingParameter]
-        public IModalService Modal { get; set; }
-
         protected override void OnInitialized()
         {
             Facade.PropertyChanged += (s, e) => InvokeAsync(StateHasChanged);
-            Facade.NewRoom += async (s, e) =>
-            {
-                await InvokeAsync(async () =>
-                {
-                    ModalParameters param = new();
-                    param.Add(nameof(InputText.Room), e.Room);
-                    var modal = Modal.Show<InputText>("Naming room.", param);
-                    var result = await modal.Result;
-                });
-
-
-            };
             base.OnInitialized();
         }
         protected override async void OnAfterRender(bool firstRender)
@@ -43,6 +31,12 @@ namespace CanvasComponent.View
 
             await Facade.OnAfterRender(firstRender);
             base.OnAfterRender(firstRender);
+        }
+
+        private async Task ClickImport(MouseEventArgs e)
+        {
+            if(e.Button == 0)
+                await js.InvokeVoidAsync("eval", "document.querySelector(\"#ImportJson\").click()");
         }
     }
 }

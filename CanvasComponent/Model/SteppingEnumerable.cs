@@ -8,6 +8,7 @@ namespace CanvasComponent.Model
     {
         private IEnumerable<IEnumerable<T>> list = new IEnumerable<T>[0];
         private int index = 0;
+        private bool hadSeed = false;
         public IEnumerator<T> GetEnumerator()
         {
             foreach(T obj in list.Take(index).SelectMany(x => x))
@@ -21,13 +22,13 @@ namespace CanvasComponent.Model
 
         public void StepForward()
         {
-            if (index < list.Count())
+            if (CanStepForward())
                 index++;
         }
 
         public void StepBackward()
         {
-            if(index > 0)
+            if(CanStepBackward())
                 index--;
         }
 
@@ -43,12 +44,22 @@ namespace CanvasComponent.Model
             => index < list.Count();
 
         public bool CanStepBackward()
-            => index > 0;
+            => index > (hadSeed ? 1 : 0);
 
         public void AddRange(IEnumerable<T> values)
         {
             list = list.Take(index).Append(values).ToArray();
             index++;
+        }
+
+        public SteppingEnumerable(IEnumerable<T> initial)
+        {
+            list = new[] { initial };
+            index = 1;
+            hadSeed = true;
+        }
+        public SteppingEnumerable()
+        {
         }
     }
 }

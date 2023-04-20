@@ -6,7 +6,7 @@ using System.Linq;
 
 namespace CanvasComponent.Model
 {
-    public class Room
+    public class Room : INamed
     {
         public Room(IEnumerable<Line> lines)
         {

@@ -1,6 +1,6 @@
-﻿namespace CanvasComponent.Model
+﻿namespace CanvasComponent.Model.JSObjects
 {
-    public class BoundingClientRect
+    internal class BoundingClientRect
     {
         public double X { get; set; }
         public double Y { get; set; }

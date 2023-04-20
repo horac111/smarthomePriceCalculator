@@ -1,10 +1,9 @@
 ﻿using CanvasComponent.Abstract;
-using CanvasComponent.Drawing;
+using CanvasComponent.DrawingStyles;
 using CanvasComponent.Enums;
 using CanvasComponent.Extensions;
 using CanvasComponent.Model;
 using Microsoft.AspNetCore.Components.Web;
-using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -89,7 +88,7 @@ namespace CanvasComponent.Service
         }
 
         private double ClosestMultiplier(double number)
-            => number - (number % GridSize > GridSize / 2 ? number % GridSize - GridSize : number % GridSize);
+            => number - (number % GridDensity > GridDensity / 2 ? number % GridDensity - GridDensity : number % GridDensity);
 
         public override void Clear()
         {

@@ -1,6 +1,6 @@
 ﻿using CanvasComponent.Model;
 
-namespace CanvasComponent.Drawing
+namespace CanvasComponent.DrawingStyles
 {
     class Polygon : StraightLine
     {

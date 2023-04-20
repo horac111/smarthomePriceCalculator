@@ -4,7 +4,7 @@ using CanvasComponent.Model;
 using System;
 using System.Collections.Generic;
 
-namespace CanvasComponent.Drawing
+namespace CanvasComponent.DrawingStyles
 {
     public abstract class DrawingBase : IDrawingStyle
     {

@@ -2,6 +2,7 @@
 using CanvasComponent.EventArguments;
 using CanvasComponent.Service;
 using Microsoft.AspNetCore.Components.Web;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,8 +10,10 @@ using System.Threading.Tasks;
 
 namespace CanvasComponent.Model
 {
-    public class Project : NotifyPropertyChanged
+    public class Project : NotifyPropertyChanged, INamed
     {
+        public string Name { get; set; }
+
         private SteppingEnumerable<Room> rooms = new();
         public IEnumerable<Room> Rooms { get => rooms; }
 
@@ -21,7 +24,7 @@ namespace CanvasComponent.Model
 
         public event EventHandler<RoomsEventArgs> NewRooms;
 
-        internal protected IEnumerable<ISmartDevice> Devices { get; private set; }
+        internal protected IEnumerable<ISmartDevice> Devices { get; }
 
         private Room ContainsCentralUnit { get; set; }
         private IDrawingHelper drawingHelper;
@@ -66,8 +69,16 @@ namespace CanvasComponent.Model
                     foreach (var device in Devices)
                         device.IsVisible = !device.IsCentralUnit;
                 }
-
+                OnPropertyChanged(nameof(rooms));
             }
+        }
+
+        [JsonConstructor]
+        private Project(IEnumerable<Room> rooms, string name, double totalPrice) 
+        {
+            this.rooms = new(rooms);
+            Name = name;
+            TotalPrice = totalPrice;
         }
 
         public Project(IEnumerable<ISmartDevice> devices)
@@ -81,13 +92,11 @@ namespace CanvasComponent.Model
 
         public void OnRoomsFound(object sender, RoomsEventArgs e)
         {
-            var toAdd = e.Rooms.Except(rooms);
+            var toAdd = e.Rooms.Except(rooms).ToList();
+            rooms.AddRange(toAdd);
+            RoomsChanged();
             if (toAdd.Count() != 0)
             {
-                rooms.AddRange(toAdd);
-                /*OnPropertyChanged(nameof(Rooms));
-                OnPropertyChanged(nameof(CanStepForward));
-                OnPropertyChanged(nameof(CanStepBackward));*/
                 NewRooms.Invoke(this, new(toAdd));
             }
         }
@@ -95,6 +104,19 @@ namespace CanvasComponent.Model
         public void OnStep(object sender, StepEventArgs e)
         {
             rooms.Step(e.Forward);
+            RoomsChanged();
+        }
+
+        internal protected void UpdateFromProject(Project project)
+        {
+            rooms = new(project.Rooms.ToArray());
+            Name = project.Name;
+            TotalPrice = project.TotalPrice;
+            RoomsChanged();
+        }
+
+        private void RoomsChanged()
+        {
             OnPropertyChanged(nameof(Rooms));
             OnPropertyChanged(nameof(CanStepForward));
             OnPropertyChanged(nameof(CanStepBackward));

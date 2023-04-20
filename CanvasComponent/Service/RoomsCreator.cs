@@ -44,6 +44,12 @@ namespace CanvasComponent.Service
             allLines.Step(e.Forward);
             OnPropertyChanged(nameof(AllLines));
         }
+
+        public override void UpdateFromLines(IEnumerable<Line> lines)
+        {
+            allLines = new(lines);
+            OnPropertyChanged(nameof(AllLines));
+        }
     }
 
 

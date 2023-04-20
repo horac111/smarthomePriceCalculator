@@ -1,4 +1,4 @@
-﻿using CanvasComponent.Drawing;
+﻿using CanvasComponent.DrawingStyles;
 using CanvasComponent.EventArguments;
 using CanvasComponent.Model;
 using Microsoft.AspNetCore.Components.Web;
@@ -12,7 +12,7 @@ namespace CanvasComponent.Abstract
         internal protected virtual int SelectedDrawingStyle { get; set; }
         internal protected virtual bool SnapToGrid { get; set; }
 
-        public virtual double GridSize { get; set; } = 50;
+        public virtual double GridDensity { get; set; } = 50;
 
         public virtual IEnumerable<Line> Lines { get; set; } = new List<Line>();
 

@@ -1,12 +1,9 @@
-﻿@using CanvasComponent.Abstract
-@using CanvasComponent.Facade
-@using Microsoft.Fast.Components.FluentUI
-@inject IJSRuntime js
+﻿@inject IJSRuntime js
 
 <div class="container h-100 w-100 mw-100 mh-100 m-0 d-flex flex-column p-0">
     <div class="justify-content-start m-0 flex-grow-1 d-flex flex-row">
         <div id="CanvasContainer" class="p-0 m-0 border-accent flex-grow-1" dropzone="move" ondragover="event.preventDefault()">
-            <Excubo.Blazor.Canvas.Canvas tabindex="0" width="@(Facade.DrawingHelper?.Width ?? 0)"
+            <Excubo.Blazor.Canvas.Canvas id="@CanvasFacade.CanvasID" tabindex="0" width="@(Facade.DrawingHelper?.Width ?? 0)"
                                          height="@(Facade.DrawingHelper?.Height ?? 0)"
                                          @onmousemove="@Facade.OnMouseMove" @onmousedown="@Facade.OnMouseDown"
                                          @ondrop="@(e => Facade.OnDragDrop(e, "CanvasContainer"))"
@@ -16,28 +13,50 @@
         <div dropzone="move" class="border-accent  align-content-center d-flex flex-column flex-wrap">
             @foreach (var device in Facade.Devices)
             {
-                if(device.IsVisible)
+                if (device.IsVisible)
                 {
                     <img src="@device.Icon" class="m-1" id="@device.Id" height="32" width="32" draggable="true"
-                        @ondragstart="@(e => Facade.OnDragStart(device, "CanvasContainer"))" />
+                 @ondragstart="@(e => Facade.OnDragStart(device, "CanvasContainer"))" />
                     <FluentTooltip Anchor="@device.Id.ToString()" Position="TooltipPosition.Left" Delay="200">@device.Name</FluentTooltip>
                 }
-                
+
                 <img id="@("img" + device.Id)" height="32" width="32" style="display:none" src="@device.Icon" />
             }
         </div>
     </div>
-    <div class="d-flex border-accent ">
-        <div class="justify-self-start  justify-content-start">
-            <FluentButton Appearance="Appearance.Neutral" Disabled="!Facade.CanStepBackward" Class="z-2 m-1 position-absolute" @onclick="() => Facade.OnStep(false)">
-                    <FluentIcon Name="@FluentIcons.ArrowLeft" Size="@IconSize.Size24" Variant="@IconVariant.Filled" Color="@Color.Accent" />
+    <div class="d-flex flex-row border-accent ">
+        <div class="d-flex flex-row">
+            <FluentButton Appearance="Appearance.Neutral" Disabled="!Facade.CanStepBackward" Class="m-1" @onclick="() => Facade.OnStep(false)">
+                <FluentIcon Name="@FluentIcons.ArrowLeft" Size="@IconSize.Size24" Variant="@IconVariant.Filled" Color="@Color.Accent" />
             </FluentButton>
-            <FluentButton Appearance="Appearance.Neutral" Disabled="!Facade.CanStepForward" Class="z-2 m-1 position-absolute" @onclick="() => Facade.OnStep(true)">
+            <FluentButton Appearance="Appearance.Neutral" Disabled="!Facade.CanStepForward" Class="m-1" @onclick="() => Facade.OnStep(true)">
                 <FluentIcon Name="@FluentIcons.ArrowRight" Size="@IconSize.Size24" Variant="@IconVariant.Filled" Color="@Color.Accent" />
             </FluentButton>
         </div>
-        <div class="justify-self-center ">
+        <div class="d-flex flex-row flex-grow-1 justify-content-center align-items-center">
             <label>Price:</label> <label>@Facade.TotalPrice</label>
+        </div>
+        <div class="d-flex flex-row">
+            <FluentButton Appearance="Appearance.Neutral" Class="m-1" @onclick="Facade.ExportPng">
+                <div class="d-flex flex-row">
+                    <FluentIcon Name="@FluentIcons.ArrowDownload" Size="@IconSize.Size20" Variant="@IconVariant.Filled" Color="@Color.Accent" />
+                    PNG
+                </div>
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Neutral" Class="m-1" @onclick="Facade.ExportJson">
+                <div class="d-flex flex-row">
+                    <FluentIcon Name="@FluentIcons.ArrowDownload" Size="@IconSize.Size20" Variant="@IconVariant.Filled" Color="@Color.Accent" />
+                    JSON
+                </div>
+            </FluentButton>
+            <FluentButton Appearance="Appearance.Neutral" Class="m-1"@onmousedown="ClickImport" >
+                <div class="d-flex flex-row">
+                    <InputFile type="file" accept=".json" id="ImportJson" hidden OnChange="@Facade.ImportJson" />
+                    <FluentIcon Name="@FluentIcons.ArrowUpload"  Size="@IconSize.Size20" Variant="@IconVariant.Filled" Color="@Color.Accent" />
+                    JSON
+                </div>
+            </FluentButton>
+            
         </div>
     </div>
 </div>

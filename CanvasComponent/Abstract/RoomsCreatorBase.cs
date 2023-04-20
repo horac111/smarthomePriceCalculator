@@ -20,5 +20,6 @@ namespace CanvasComponent.Abstract
             => RoomsFound?.Invoke(this, new(rooms));
 
         public abstract void OnStep(object sender, StepEventArgs e);
+        public abstract void UpdateFromLines(IEnumerable<Line> lines);
     }
 }

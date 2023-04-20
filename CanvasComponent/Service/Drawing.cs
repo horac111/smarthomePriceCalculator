@@ -1,11 +1,19 @@
 ﻿using CanvasComponent.Abstract;
 using CanvasComponent.EventArguments;
+using CanvasComponent.Facade;
 using CanvasComponent.Model;
+using CanvasComponent.Model.JSObjects;
 using Excubo.Blazor.Canvas;
 using Excubo.Blazor.Canvas.Contexts;
+using Microsoft.AspNetCore.Components;
+using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.JSInterop;
+using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Runtime.CompilerServices;
+using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 
@@ -16,29 +24,25 @@ namespace CanvasComponent.Service
         public Drawing(IJSRuntime js)
         {
             this.js = js;
-            Task.Run(async () =>
-            {
-                var func = "getComputedStyle(document.getElementById(\"CanvasContainer\")).getPropertyValue('{0}')";
-                temporaryColor = await js.InvokeAsync<string>("eval", string.Format(func, "--accent-fill-hover"));
-                roomColor = await js.InvokeAsync<string>("eval", string.Format(func, "--neutral-layer-4"));
-                noRoomColor = await js.InvokeAsync<string>("eval", string.Format(func, "--neutral-stroke-strong-rest"));
-            });
+            Task.Run(GetColors);
         }
 
         private IJSRuntime js;
-        private string noRoomColor { get; set; }
-        private string roomColor { get; set; }
-        private string temporaryColor { get; set; }
+        private string noRoomColor;
+        private string roomColor;
+        private string temporaryColor;
         private SemaphoreSlim drawing = new(1, 1);
         private Context2D ctx;
         private IDrawByStyle drawByStyle;
+        private Stopwatch lastColorChange = new();
+        private readonly TimeSpan colorChangingFrequency = TimeSpan.FromSeconds(1);
 
-        private IRoomsCreatorBase roomsCreator;
+        private IRoomsCreator roomsCreator;
         private IDrawingHelper drawingHelper;
         private Project project;
 
         public Canvas Canvas { get; set; }
-        
+
         public double Thickness { get; set; } = 1;
         public bool ShowGrid { get; set; }
 
@@ -77,9 +81,9 @@ namespace CanvasComponent.Service
 
         private async Task AddGrid(Batch2D batch)
         {
-            for (double i = 0; i < drawingHelper.Width; i += drawByStyle.GridSize)
+            for (double i = 0; i < drawingHelper.Width; i += drawByStyle.GridDensity)
                 await DrawLine(new(new(i, 0), new(i, drawingHelper.Height)), "Black", batch);
-            for (double i = 0; i < drawingHelper.Height; i += drawByStyle.GridSize)
+            for (double i = 0; i < drawingHelper.Height; i += drawByStyle.GridDensity)
                 await DrawLine(new(new(0, i), new(drawingHelper.Width, i)), "Black", batch);
         }
 
@@ -135,10 +139,7 @@ namespace CanvasComponent.Service
             Batch2D batch = null;
             try
             {
-                var func = "getComputedStyle(document.getElementById(\"CanvasContainer\")).getPropertyValue('{0}')";
-                temporaryColor = await js.InvokeAsync<string>("eval", string.Format(func, "--accent-fill-hover"));
-                roomColor = await js.InvokeAsync<string>("eval", string.Format(func, "--neutral-stroke-strong-active"));
-                noRoomColor = await js.InvokeAsync<string>("eval", string.Format(func, "--neutral-stroke-strong-rest"));
+                await GetColors();
 
                 batch = ctx.CreateBatch();
                 await batch.LineWidthAsync(Thickness);
@@ -173,7 +174,7 @@ namespace CanvasComponent.Service
         }
 
         public async Task Initialize(IDrawingHelper drawingHelper, Project project,
-            IDrawByStyle drawByStyle, IRoomsCreatorBase roomsCreator)
+            IDrawByStyle drawByStyle, IRoomsCreator roomsCreator)
         {
             ctx = await Canvas.GetContext2DAsync();
             drawing = new(1, 1);
@@ -184,6 +185,46 @@ namespace CanvasComponent.Service
             this.roomsCreator = roomsCreator;
             this.project = project;
             await Draw(1000);
+        }
+
+        public async ValueTask<string> GetCanvasAsImage()
+        {
+            string id = "img_" + Guid.NewGuid().ToString().Replace('-', '_');
+
+            var assignment = $"window.{id} = document.querySelector(\"#{CanvasFacade.CanvasID}\")" +
+                $".toDataURL('image/png').replace(\"image/png\", \"image/octet-stream\");";
+            await js.InvokeVoidAsync("eval", assignment);
+
+            return id;
+        }
+
+        private async Task GetColors()
+        {
+            if (!lastColorChange.IsRunning || lastColorChange.Elapsed > colorChangingFrequency)
+            {
+                List<Task> tasks = new();
+                lastColorChange.Restart();
+                var func = "getComputedStyle(document.getElementById(\"CanvasContainer\")).getPropertyValue('{0}')";
+                tasks.Add(js.InvokeAsync<string>("eval", string.Format(func, "--accent-fill-hover"))
+                    .AsTask().ContinueWith(task =>
+                    {
+                        if (task.IsCompletedSuccessfully)
+                            temporaryColor = task.Result;
+                    }));
+                tasks.Add(js.InvokeAsync<string>("eval", string.Format(func, "--neutral-stroke-strong-active"))
+                    .AsTask().ContinueWith(task =>
+                    {
+                        if (task.IsCompletedSuccessfully)
+                            roomColor = task.Result;
+                    }));
+                tasks.Add(js.InvokeAsync<string>("eval", string.Format(func, "--neutral-stroke-strong-rest"))
+                    .AsTask().ContinueWith(task =>
+                    {
+                        if (task.IsCompletedSuccessfully)
+                            noRoomColor = task.Result;
+                    }));
+                await Task.WhenAll(tasks);
+            }
         }
 
         public void Dispose()

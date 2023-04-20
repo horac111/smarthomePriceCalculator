@@ -3,74 +3,62 @@
 @using CanvasComponent.Abstract
 @using CanvasComponent.View
 @using SmartHomeCalculator.Components
-@inject ICanvasFacade viewModel
+@inject ICanvasFacade CanvasFacade
 
 
 
-    <div class="wrapper" Appearance="Appearance.Filled">
-        <FluentButton Appearance="Appearance.Neutral" Class="z-2 m-1 position-absolute" @onclick="() => showSidebar ^= true">
-            @if (showSidebar)
-            {
-                <FluentIcon Name="@FluentIcons.ArrowLeft" Size="@IconSize.Size24" Variant="@IconVariant.Filled" Color="@Color.Accent" />
-            }
-            else
-            {
-                <FluentIcon Name="@FluentIcons.ArrowRight" Size="@IconSize.Size24" Variant="@IconVariant.Filled" Color="@Color.Accent" />
-            }
-        </FluentButton>
-        @if (showSidebar)
-        {
-            <FluentCard Appearance="Appearance.Lightweight" Orientation="Orientation.Vertical" Class="w-25 z-1 position-absolute">
-
-                <Stack Orientation="Orientation.Vertical" Class="mt-5 m-1">
-                    <FluentRadioGroup Appearance="@Appearance.Outline" Required="true" Orientation="Orientation.Vertical" @bind-Value="viewModel.SelectedStyle">
-                        @foreach (var val in viewModel.DrawingTypes)
-                        {
-                            <FluentRadio Value="@val.Value">@val.Name</FluentRadio>
-                        }
-                    </FluentRadioGroup>
-                    <FluentDivider Appearance="Appearance.Accent" />
-                    <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@viewModel.GridSize" Min="0"
-                                   Step="1" Required="true">Grid density:</FluentNumberField>
-
-                    <FluentCheckbox Appearance="Appearance.Outline" @bind-Value="@viewModel.ShowGrid">Is grid visible</FluentCheckbox>
-
-                    <FluentCheckbox Appearance="Appearance.Outline" @bind-Value="@viewModel.SnapToGrid">Snap to grid</FluentCheckbox>
-
-                    <FluentDivider Appearance="Appearance.Accent" />
-
-                    <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@viewModel.AutoComplete" Min="0"
-                                   Step="0.25" Required="true">Pixels to close room:</FluentNumberField>
-
-                    <FluentDivider Appearance="Appearance.Accent" />
-
-                    <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@viewModel.Thickness" Min="0.25"
-                                   Step="0.25" Required="true">Line thickness:</FluentNumberField>
-                </Stack>
-            </FluentCard>
-        }
+<div class="wrapper" Appearance="Appearance.Filled">
+    
 
 
-        <div class="content">
-            <div class="container-flux h-100">
-                <div class="row m-0 h-100">
-                    <Canvas Facade="@viewModel" />
-                </div>
+    <div class="content">
+        <div class="container-flux h-100">
+            <div class="row m-0 h-100">
+                <FluentButton Appearance="Appearance.Neutral" Class="z-2 m-2 position-absolute" @onclick="() => showSidebar ^= true">
+                    @if (showSidebar)
+                    {
+                        <FluentIcon Name="@FluentIcons.ArrowLeft" Size="@IconSize.Size24" Variant="@IconVariant.Filled" Color="@Color.Accent" />
+                    }
+                    else
+                    {
+                        <FluentIcon Name="@FluentIcons.ArrowRight" Size="@IconSize.Size24" Variant="@IconVariant.Filled" Color="@Color.Accent" />
+                    }
+                </FluentButton>
+                @if (showSidebar)
+                {
+                    <FluentCard Appearance="Appearance.Lightweight" Orientation="Orientation.Vertical" Class="w-25 z-1 pl-3 h-75 position-absolute">
+                         
+                        <Stack Orientation="Orientation.Vertical" Class="mt-5 m-1">
+                            <FluentRadioGroup Appearance="@Appearance.Outline" Required="true" Orientation="Orientation.Vertical" @bind-Value="CanvasFacade.SelectedDrawingStyle">
+                                @foreach (var val in CanvasFacade.DrawingTypes)
+                                {
+                                    <FluentRadio Value="@val.Value">@val.Name</FluentRadio>
+                                }
+                            </FluentRadioGroup>
+                            <FluentDivider Appearance="Appearance.Accent" />
+                            <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.GridDensity" Min="0"
+                                           Step="1" Required="true">Grid density:</FluentNumberField>
+
+                            <FluentCheckbox Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.ShowGrid">Is grid visible</FluentCheckbox>
+
+                            <FluentCheckbox Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.SnapToGrid">Snap to grid</FluentCheckbox>
+
+                            <FluentDivider Appearance="Appearance.Accent" />
+
+                            <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.AutoComplete" Min="0"
+                                           Step="0.25" Required="true">Pixels to close room:</FluentNumberField>
+
+                            <FluentDivider Appearance="Appearance.Accent" />
+
+                            <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.Thickness" Min="0.25"
+                                           Step="0.25" Required="true">Line thickness:</FluentNumberField>
+                        </Stack>
+                    </FluentCard>
+                }
+                <Canvas Facade="@CanvasFacade" />
             </div>
         </div>
     </div>
+</div>
 
-
-
-@code
-{
-    bool showSidebar = true;
-    
-
-    protected override void OnInitialized()
-    {
-        viewModel.PropertyChanged += (s, e) => InvokeAsync(StateHasChanged);
-        base.OnInitialized();
-    }
-}
 

@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace CanvasComponent.Abstract
 {
-    public interface IDrawByStyleBase
+    public interface IDrawByStyle
     {
-        double GridSize { get; set; }
+        double GridDensity { get; set; }
         IEnumerable<Line> Lines { get; set; }
 
         void Clear();
