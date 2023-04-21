@@ -7,6 +7,9 @@ using System.Collections.Generic;
 
 namespace CanvasComponent.Abstract
 {
+    /// <summary>
+    /// Handles drawing styles which handles the lines creations
+    /// </summary>
     public abstract class DrawByStyleBase : NotifyPropertyChanged, IDrawByStyle
     {
         internal protected virtual int SelectedDrawingStyle { get; set; }

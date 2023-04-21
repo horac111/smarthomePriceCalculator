@@ -155,20 +155,26 @@ namespace CanvasComponent.Facade
             get => drawing.Canvas;
             set => drawing.Canvas = value;
         }
+
+        /// <summary>
+        /// Undo or redo
+        /// </summary>
+        public event EventHandler<StepEventArgs> Step;
         #endregion
 
-        public event EventHandler<StepEventArgs> Step;
 
+        #region Contructors
 
         public CanvasFacade(Project project, IJSRuntime js, IModalService modalService)
-            : this(new DrawByStyle(), new RoomsCreator(), new(js), project, new(modalService), new(js))
+            : this(new DrawByStyle(), new RoomsCreator(), new Drawing(js), project,
+                  new NamingService(modalService), new Importer(js))
         {
 
 
         }
 
         public CanvasFacade(DrawByStyleBase byStyle, RoomsCreatorBase roomsCreator,
-            Service.Drawing drawing, Project project, NamingService namingService, Importer importer)
+            IDrawing drawing, Project project, INamingService namingService, IImporter importer)
         {
             if (byStyle is null)
                 throw new ArgumentNullException(nameof(byStyle));
@@ -198,7 +204,14 @@ namespace CanvasComponent.Facade
             Step += roomsCreator.OnStep;
             this.importer = importer;
         }
+        #endregion
+        #region Methods
 
+        /// <summary>
+        /// This method initializes and redraws
+        /// </summary>
+        /// <param name="firstTime"></param>
+        /// <returns></returns>
         public async Task OnAfterRender(bool firstTime)
         {
             if (firstTime)
@@ -212,12 +225,27 @@ namespace CanvasComponent.Facade
             await drawing.Draw(0);
         }
 
+        /// <summary>
+        /// Method reacts to the event NewRoom
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
+        /// <returns></returns>
         private async Task OnNewRoom(object sender, NewRoomEventArgs e)
             => await namingService.ShowInputText(e.Room, "Room name:");
 
+        /// <summary>
+        /// Method reacts to event Draw
+        /// </summary>
+        /// <param name="sender"></param>
+        /// <param name="e"></param>
         private async void DrawCalled(object sender, EventArgs e)
             => await drawing.Draw();
 
+        /// <summary>
+        /// Method starts drawing or clears canvas
+        /// </summary>
+        /// <param name="e"></param>
         public void OnMouseDown(MouseEventArgs e)
         {
             if (e.Button == 0)
@@ -226,9 +254,18 @@ namespace CanvasComponent.Facade
                 drawByStyle.Clear();
         }
 
+        /// <summary>
+        /// Draw temporary lines
+        /// </summary>
+        /// <param name="e"></param>
         public void OnMouseMove(MouseEventArgs e)
             => drawByStyle.MouseMove(DrawingHelper.TransformEventArgs(e));
 
+        /// <summary>
+        /// Smart device drag-and-drop initiated
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="zone"></param>
         public void OnDragStart(ISmartDevice device, string zone)
             => dragAndDrop.OnDragStart(device, zone);
 
@@ -243,9 +280,19 @@ namespace CanvasComponent.Facade
             drawing.PropertyChanged -= OnPropertyChanged;
         }
 
+        /// <summary>
+        /// Smart device drag-and-drop finished
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="zone"></param>
         public void OnDragDrop(DragEventArgs e, string zone)
             => project.OnDragDrop(e, dragAndDrop.OnDrop(zone));
 
+
+        /// <summary>
+        /// Clear - esc, ctrl + z - undo, ctrl + y - redo
+        /// </summary>
+        /// <param name="e"></param>
         public void OnKeyDown(KeyboardEventArgs e)
         {
             if (e.Key == "Escape")
@@ -256,16 +303,31 @@ namespace CanvasComponent.Facade
                 OnStep(true);
         }
 
+        /// <summary>
+        /// Invokes Step event e.g. redo or undo
+        /// </summary>
+        /// <param name="forward"></param>
         public void OnStep(bool forward)
              => Step.Invoke(this, new(forward));
 
+        /// <summary>
+        /// Downloads project as json
+        /// </summary>
         public async void ExportJson()
             => await importer.ExportJson(project);
 
+        /// <summary>
+        /// Downloads project as png
+        /// </summary>
         public async void ExportPng()
            => await importer.ExportPng(await drawing.GetCanvasAsImage(), project.Name);
 
+        /// <summary>
+        /// Imports the project
+        /// </summary>
+        /// <param name="e"></param>
         public async void ImportJson(InputFileChangeEventArgs e)
             => await importer.Import(project, roomsCreator, e);
+        #endregion
     }
 }

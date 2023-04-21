@@ -12,6 +12,7 @@ using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Linq;
 using System.Runtime.CompilerServices;
 using System.Text.Json.Nodes;
 using System.Threading;
@@ -19,7 +20,10 @@ using System.Threading.Tasks;
 
 namespace CanvasComponent.Service
 {
-    public class Drawing : NotifyPropertyChanged, IDisposable
+    /// <summary>
+    /// Handles drawing of the components to the canvas
+    /// </summary>
+    public class Drawing : NotifyPropertyChanged, IDisposable, IDrawing
     {
         public Drawing(IJSRuntime js)
         {
@@ -27,10 +31,12 @@ namespace CanvasComponent.Service
             Task.Run(GetColors);
         }
 
+        #region Private
         private IJSRuntime js;
         private string noRoomColor;
         private string roomColor;
         private string temporaryColor;
+        private string gridColor;
         private SemaphoreSlim drawing = new(1, 1);
         private Context2D ctx;
         private IDrawByStyle drawByStyle;
@@ -40,14 +46,18 @@ namespace CanvasComponent.Service
         private IRoomsCreator roomsCreator;
         private IDrawingHelper drawingHelper;
         private Project project;
+        #endregion
 
+        #region Public
         public Canvas Canvas { get; set; }
 
         public double Thickness { get; set; } = 1;
         public bool ShowGrid { get; set; }
 
         public NewRoomDelegate NewRoom { get; set; }
+        #endregion
 
+        #region Methods
         public async void OnNewRooms(object sender, RoomsEventArgs e)
         {
             if (!await drawing.WaitAsync(1000))
@@ -82,9 +92,9 @@ namespace CanvasComponent.Service
         private async Task AddGrid(Batch2D batch)
         {
             for (double i = 0; i < drawingHelper.Width; i += drawByStyle.GridDensity)
-                await DrawLine(new(new(i, 0), new(i, drawingHelper.Height)), "Black", batch);
+                await DrawLine(new(new(i, 0), new(i, drawingHelper.Height)), gridColor, batch);
             for (double i = 0; i < drawingHelper.Height; i += drawByStyle.GridDensity)
-                await DrawLine(new(new(0, i), new(drawingHelper.Width, i)), "Black", batch);
+                await DrawLine(new(new(0, i), new(drawingHelper.Width, i)), gridColor, batch);
         }
 
         private async Task DrawRoom(Room room, string color, Batch2D batch = null)
@@ -95,10 +105,6 @@ namespace CanvasComponent.Service
                 foreach (var line in room.Lines)
                     await DrawLine(line, color, disposableBatch, true);
 
-                /*Line cross = new(new(room.Center.X - 5, room.Center.Y - 5), new(room.Center.X + 5, room.Center.Y + 5));
-                await drawLine(cross, "Blue", disposableBatch);
-                cross = new(new(room.Center.X + 5, room.Center.Y - 5), new(room.Center.X - 5, room.Center.Y + 5));
-                await drawLine(cross, "Blue", disposableBatch);*/
                 var center = room.Center;
                 if (!string.IsNullOrEmpty(room.Name))
                     await disposableBatch.StrokeTextAsync(room.Name, center.X - 50, center.Y - 20);
@@ -130,7 +136,7 @@ namespace CanvasComponent.Service
 
         public async Task Draw(int wait = 5)
         {
-            if (ctx is null)
+            if (ctx is null || drawingHelper is null)
                 return;
 
             if (!await drawing.WaitAsync(wait))
@@ -223,13 +229,21 @@ namespace CanvasComponent.Service
                         if (task.IsCompletedSuccessfully)
                             noRoomColor = task.Result;
                     }));
+                tasks.Add(js.InvokeAsync<string>("eval", string.Format(func, "--accent-foreground-hover"))
+                   .AsTask().ContinueWith(task =>
+                   {
+                       if (task.IsCompletedSuccessfully)
+                           gridColor = task.Result;
+                   }));
                 await Task.WhenAll(tasks);
             }
         }
+
 
         public void Dispose()
         {
             ctx?.DisposeAsync();
         }
+        #endregion
     }
 }

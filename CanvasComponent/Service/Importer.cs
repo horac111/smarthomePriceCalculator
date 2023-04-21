@@ -10,7 +10,10 @@ using System.Threading.Tasks;
 
 namespace CanvasComponent.Service
 {
-    public class Importer
+    /// <summary>
+    /// Imports and exports the project
+    /// </summary>
+    public class Importer : IImporter
     {
         private IJSRuntime js;
         private readonly JsonSerializerSettings jsonSettings = new()

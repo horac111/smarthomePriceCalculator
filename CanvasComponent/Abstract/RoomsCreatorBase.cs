@@ -6,6 +6,9 @@ using System.Linq;
 
 namespace CanvasComponent.Abstract
 {
+    /// <summary>
+    /// Reacts on new lines and creates rooms
+    /// </summary>
     public abstract class RoomsCreatorBase : NotifyPropertyChanged, IRoomsCreator
     {
         public virtual IEnumerable<Line> AllLines { get; }

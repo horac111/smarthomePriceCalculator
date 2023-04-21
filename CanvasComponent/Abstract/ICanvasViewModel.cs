@@ -22,7 +22,7 @@ namespace CanvasComponent.Abstract
     /// <summary>
     /// Facade that puts together all the project parts.
     /// </summary>
-    public interface ICanvasFacade : INotifyPropertyChanged
+    public interface ICanvasFacade : INotifyPropertyChanged, IDisposable
     {
         #region Properties
 
@@ -100,16 +100,65 @@ namespace CanvasComponent.Abstract
 
         #region Methods
 
-        void Dispose();
+        /// <summary>
+        /// This method initializes and redraws
+        /// </summary>
+        /// <param name="firstTime"></param>
+        /// <returns></returns>
         Task OnAfterRender(bool firstTime);
+
+        /// <summary>
+        /// Smart device drag-and-drop finished
+        /// </summary>
+        /// <param name="e"></param>
+        /// <param name="zone"></param>
         void OnDragDrop(DragEventArgs e, string zone);
+
+        /// <summary>
+        /// Smart device drag-and-drop initiated
+        /// </summary>
+        /// <param name="device"></param>
+        /// <param name="zone"></param>
         void OnDragStart(ISmartDevice device, string zone);
+
+        /// <summary>
+        /// Method starts drawing or clears canvas
+        /// </summary>
+        /// <param name="e"></param>
         void OnMouseDown(MouseEventArgs e);
+
+        /// <summary>
+        /// Draw temporary lines
+        /// </summary>
+        /// <param name="e"></param>
         void OnMouseMove(MouseEventArgs e);
+
+        /// <summary>
+        /// Clear - esc, ctrl + z - undo, ctrl + y - redo
+        /// </summary>
+        /// <param name="e"></param>
         void OnKeyDown(KeyboardEventArgs e);
+
+        /// <summary>
+        /// Invokes Step event e.g. redo or undo
+        /// </summary>
+        /// <param name="forward"></param>
         void OnStep(bool forward);
+
+        /// <summary>
+        /// Downloads project as json
+        /// </summary>
         void ExportJson();
+
+        /// <summary>
+        /// Downloads project as png
+        /// </summary>
         void ExportPng();
+
+        /// <summary>
+        /// Imports the project
+        /// </summary>
+        /// <param name="e"></param>
         void ImportJson(InputFileChangeEventArgs e);
         #endregion
     }

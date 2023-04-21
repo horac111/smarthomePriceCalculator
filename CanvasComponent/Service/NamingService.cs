@@ -7,11 +7,14 @@ using System.Threading.Tasks;
 
 namespace CanvasComponent.Service
 {
-    public class NamingService
+    /// <summary>
+    /// Shows modal dialog to name given model
+    /// </summary>
+    public class NamingService : INamingService
     {
         private IModalService modal;
 
-        public NamingService(IModalService modal) 
+        public NamingService(IModalService modal)
         {
             this.modal = modal;
         }

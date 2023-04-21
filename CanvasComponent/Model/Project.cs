@@ -10,6 +10,9 @@ using System.Threading.Tasks;
 
 namespace CanvasComponent.Model
 {
+    /// <summary>
+    /// Contains rooms and calculates the total price
+    /// </summary>
     public class Project : NotifyPropertyChanged, INamed
     {
         public string Name { get; set; }
@@ -109,6 +112,11 @@ namespace CanvasComponent.Model
 
         internal protected void UpdateFromProject(Project project)
         {
+            var devicesId = Devices.Select(x => x.Id).ToHashSet();
+            foreach (var room in project.Rooms) 
+                foreach(var device in room.Devices.Where(x => !devicesId.Contains(x.Id)))
+                    room.Devices.Remove(device);
+
             rooms = new(project.Rooms.ToArray());
             Name = project.Name;
             TotalPrice = project.TotalPrice;
