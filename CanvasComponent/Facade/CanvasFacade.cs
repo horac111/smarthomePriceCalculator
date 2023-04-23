@@ -27,9 +27,9 @@ namespace CanvasComponent.Facade
 
         private RoomsCreatorBase roomsCreator;
 
-        private Drawing drawing;
-        private NamingService namingService;
-        private Importer importer;
+        private IDrawing drawing;
+        private INamingService namingService;
+        private IImporter importer;
 
         private Project project;
 

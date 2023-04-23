@@ -1,6 +1,7 @@
 ﻿using CanvasComponent.EventArguments;
 using CanvasComponent.Model;
 using Excubo.Blazor.Canvas;
+using System.ComponentModel;
 using System.Threading.Tasks;
 
 namespace CanvasComponent.Abstract
@@ -8,7 +9,7 @@ namespace CanvasComponent.Abstract
     /// <summary>
     /// Handles drawing of the components to the canvas
     /// </summary>
-    public interface IDrawing
+    public interface IDrawing : INotifyPropertyChanged
     {
         Canvas Canvas { get; set; }
         NewRoomDelegate NewRoom { get; set; }
