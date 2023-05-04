@@ -32,6 +32,16 @@ namespace CanvasComponent.Abstract
         double AutoComplete { get; set; }
 
         /// <summary>
+        /// Sets the range in which the deletemode erases all lines and rooms
+        /// </summary>
+        public double DeleteRange { get; set; }
+
+        /// <summary>
+        /// Indicates whether the deletemode is on
+        /// </summary>
+        public bool DeleteMode { get; set; }
+
+        /// <summary>
         /// Reference to the Canvas
         /// </summary>
         Canvas Canvas { get; set; }

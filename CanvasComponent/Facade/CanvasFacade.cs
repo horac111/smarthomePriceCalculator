@@ -81,6 +81,24 @@ namespace CanvasComponent.Facade
         }
 
         /// <summary>
+        /// Sets the range in which the deletemode erases all lines and rooms
+        /// </summary>
+        public double DeleteRange
+        {
+            get => drawByStyle.DeleteRange;
+            set => drawByStyle.DeleteRange = value;
+        }
+
+        /// <summary>
+        /// Indicates whether the deletemode is on
+        /// </summary>
+        public bool DeleteMode
+        {
+            get => drawByStyle.DeleteMode;
+            set => drawByStyle.DeleteMode = value;
+        }
+
+        /// <summary>
         /// Indicates from close the new line must be to existing to snap to it 
         /// </summary>
         public double AutoComplete
@@ -167,7 +185,7 @@ namespace CanvasComponent.Facade
 
         public CanvasFacade(Project project, IJSRuntime js, IModalService modalService)
             : this(new DrawByStyle(), new RoomsCreator(), new Drawing(js), project,
-                  new NamingService(modalService), new Importer(js))
+                  new NamingService(js,modalService), new Importer(js))
         {
 
 
@@ -195,6 +213,8 @@ namespace CanvasComponent.Facade
             this.namingService = namingService;
             drawByStyle.Draw += DrawCalled;
             drawByStyle.NewLines += roomsCreator.NewLines;
+            drawByStyle.Delete += roomsCreator.OnDelete;
+            roomsCreator.LinesDeleted += project.OnLinesDeleted;
             roomsCreator.RoomsFound += project.OnRoomsFound;
             project.NewRooms += drawing.OnNewRooms;
             drawing.NewRoom += OnNewRoom;
@@ -249,7 +269,7 @@ namespace CanvasComponent.Facade
         public void OnMouseDown(MouseEventArgs e)
         {
             if (e.Button == 0)
-                drawByStyle.MouseDown(DrawingHelper.TransformEventArgs(e));
+                drawByStyle.MouseDown(DrawingHelper?.TransformEventArgs(e) ?? e);
             else
                 drawByStyle.Clear();
         }
@@ -259,7 +279,7 @@ namespace CanvasComponent.Facade
         /// </summary>
         /// <param name="e"></param>
         public void OnMouseMove(MouseEventArgs e)
-            => drawByStyle.MouseMove(DrawingHelper.TransformEventArgs(e));
+            => drawByStyle.MouseMove(DrawingHelper?.TransformEventArgs(e) ?? e);
 
         /// <summary>
         /// Smart device drag-and-drop initiated

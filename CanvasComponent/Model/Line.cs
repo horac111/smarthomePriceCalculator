@@ -15,10 +15,11 @@ namespace CanvasComponent.Model
 
         public Point End { get; internal protected set; }
 
-        public virtual double DistanceFromLine(Point point)
-        => Math.Abs((End.X - Start.X) * (Start.Y - point.Y) -
-            (Start.X - point.X) * (End.Y - Start.Y)) /
-            Math.Sqrt(Math.Pow(End.X - Start.X, 2) + Math.Pow(End.Y - Start.Y, 2));
+        public virtual double DistanceFromPoint(Point point)
+        {
+            var closest = ClosestPointOnLine(point);
+            return closest.Distance(point);
+        }
 
         public virtual Point PerpendicularPoint(Point point)
         {

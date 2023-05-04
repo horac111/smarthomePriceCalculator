@@ -9,7 +9,7 @@ using System.Linq;
 
 namespace CanvasComponent.Service
 {
-    class DrawByStyle : DrawByStyleBase
+    public class DrawByStyle : DrawByStyleBase
     {
         private int selectedDrawingStyle = 2;
 
@@ -48,17 +48,23 @@ namespace CanvasComponent.Service
         public override void MouseDown(MouseEventArgs e)
         {
             Point point = SnapedPoint(e);
-            if (LastPoint != default)
+            if(DeleteMode)
             {
-                CurrentStyle.OnMouseDown(LastPoint, point);
+                OnDelete(this, new(DeleteRange, point));
+                return;
+            }
+
+            if (LastPoint is not null)
+            {
+                CurrentStyle.OnMouseDown(LastPoint.Value, point);
                 if (!CurrentStyle.ContinueDrawing)
                 {
                     Lines = new List<Line>();
-                    LastPoint = default;
+                    LastPoint = null;
                 }
                 else
                 {
-                    Lines = CurrentStyle.OnMouseMove(LastPoint, point).Concat(Lines);
+                    Lines = CurrentStyle.OnMouseMove(LastPoint.Value, point);
                     LastPoint = point;
                 }
             }
@@ -71,10 +77,10 @@ namespace CanvasComponent.Service
 
         public override void MouseMove(MouseEventArgs e)
         {
-            if (CurrentStyle.ContinueDrawing)
+            if (LastPoint is not null && CurrentStyle.ContinueDrawing)
             {
                 Point point = SnapedPoint(e);
-                Lines = Lines.ReplaceLasts(CurrentStyle.OnMouseMove(LastPoint, point));
+                Lines = CurrentStyle.OnMouseMove(LastPoint.Value, point);
                 OnDraw();
             }
         }
@@ -88,7 +94,9 @@ namespace CanvasComponent.Service
         }
 
         private double ClosestMultiplier(double number)
-            => number - (number % GridDensity > GridDensity / 2 ? number % GridDensity - GridDensity : number % GridDensity);
+            => number - (number % GridDensity > GridDensity / 2 ?
+                number % GridDensity - GridDensity :
+                number % GridDensity);
 
         public override void Clear()
         {

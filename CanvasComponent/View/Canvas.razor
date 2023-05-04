@@ -7,7 +7,8 @@
                                          height="@(Facade.DrawingHelper?.Height ?? 0)"
                                          @onmousemove="@Facade.OnMouseMove" @onmousedown="@Facade.OnMouseDown"
                                          @ondrop="@(e => Facade.OnDragDrop(e, "CanvasContainer"))"
-                                         @ref="Facade.Canvas" draggable="false" @onkeydown="@Facade.OnKeyDown" />
+                                         @ref="Facade.Canvas" draggable="false"  
+                                         style="@((Facade.DeleteMode ? "cursor: url(img/eraser.png), auto" : "cursor: default"))" />
         </div>
 
         <div dropzone="move" class="border-accent  align-content-center d-flex flex-column flex-wrap">
@@ -34,7 +35,7 @@
             </FluentButton>
         </div>
         <div class="d-flex flex-row flex-grow-1 justify-content-center align-items-center">
-            <label>Price:</label> <label>@Facade.TotalPrice</label>
+            <label>Price: </label> <label>@Math.Round(Facade.TotalPrice, ISmartDevice.PriceRounding)</label>
         </div>
         <div class="d-flex flex-row">
             <FluentButton Appearance="Appearance.Neutral" Class="m-1" @onclick="Facade.ExportPng">

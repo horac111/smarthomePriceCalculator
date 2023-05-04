@@ -31,7 +31,7 @@ namespace CanvasComponent.Extensions
             double closestDistance = double.PositiveInfinity;
             foreach (var line in lines)
             {
-                var currentDistance = line.DistanceFromLine(point);
+                var currentDistance = line.DistanceFromPoint(point);
                 if (currentDistance.NearlyLesser(closestDistance))
                 {
                     closest = line;
@@ -51,7 +51,7 @@ namespace CanvasComponent.Extensions
             {
                 for (int i = 0; i < result.Length; i++)
                 {
-                    var currentDistance = line.DistanceFromLine(points[i]);
+                    var currentDistance = line.DistanceFromPoint(points[i]);
                     if (currentDistance.NearlyGreater(0) && currentDistance.NearlyLesser(maxDistance) &&
                         currentDistance.NearlyLesser(distances[i]))
                     {

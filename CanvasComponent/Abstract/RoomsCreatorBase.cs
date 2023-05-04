@@ -16,13 +16,19 @@ namespace CanvasComponent.Abstract
         internal protected double AutoComplete { get; set; } = 5;
 
         public event EventHandler<RoomsEventArgs> RoomsFound;
+        public event EventHandler<DeleteEventArgs> LinesDeleted;
 
         protected internal abstract void NewLines(object sender, NewLinesEventArgs e);
 
         protected virtual void OnRoomsFound(IEnumerable<Room> rooms)
             => RoomsFound?.Invoke(this, new(rooms));
 
+        protected virtual void OnLinesDeleted(DeleteEventArgs e)
+            => LinesDeleted?.Invoke(this, e);
+
         public abstract void OnStep(object sender, StepEventArgs e);
         public abstract void UpdateFromLines(IEnumerable<Line> lines);
+
+        internal protected abstract void OnDelete(object sender, DeleteEventArgs e);
     }
 }

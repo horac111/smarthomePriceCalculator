@@ -26,10 +26,5 @@
       <Analyzer Remove="@(Analyzer)" Condition="'%(Filename)' == 'Microsoft.Fast.Components.FluentUI.Configuration'" />
     </ItemGroup>
   </Target>
-  <ItemGroup>
-    <None Update="idea.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
 
 </Project>

@@ -7,10 +7,7 @@
 
 
 
-<div class="wrapper" Appearance="Appearance.Filled">
-    
-
-
+<div class="wrapper" Appearance="Appearance.Filled" tabindex="0" @onkeydown="@CanvasFacade.OnKeyDown">
     <div class="content">
         <div class="container-flux h-100">
             <div class="row m-0 h-100">
@@ -27,7 +24,7 @@
                 @if (showSidebar)
                 {
                     <FluentCard Appearance="Appearance.Lightweight" Orientation="Orientation.Vertical" Class="w-25 z-1 pl-3 h-75 position-absolute">
-                         
+
                         <Stack Orientation="Orientation.Vertical" Class="mt-5 m-1">
                             <FluentRadioGroup Appearance="@Appearance.Outline" Required="true" Orientation="Orientation.Vertical" @bind-Value="CanvasFacade.SelectedDrawingStyle">
                                 @foreach (var val in CanvasFacade.DrawingTypes)
@@ -52,6 +49,12 @@
 
                             <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.Thickness" Min="0.25"
                                            Step="0.25" Required="true">Line thickness:</FluentNumberField>
+
+                            <FluentSwitch Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.DeleteMode"
+                                      Required="true">Delete Mode:</FluentSwitch>
+
+                            <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.DeleteRange" Min="0.25"
+                                           Step="0.25" Required="true">Delete Range:</FluentNumberField>
                         </Stack>
                     </FluentCard>
                 }

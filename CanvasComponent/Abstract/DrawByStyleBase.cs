@@ -14,6 +14,8 @@ namespace CanvasComponent.Abstract
     {
         internal protected virtual int SelectedDrawingStyle { get; set; }
         internal protected virtual bool SnapToGrid { get; set; }
+        internal protected virtual double DeleteRange { get; set; } = 15;
+        internal protected virtual bool DeleteMode { get; set; }
 
         public virtual double GridDensity { get; set; } = 50;
 
@@ -21,12 +23,13 @@ namespace CanvasComponent.Abstract
 
         protected virtual DrawingBase CurrentStyle { get; }
 
-        protected virtual Point LastPoint { get; set; }
+        protected virtual Point? LastPoint { get; set; }
 
         internal protected virtual IDictionary<INamedValue<int>, DrawingBase> DrawingStyles { get; }
 
         public event EventHandler Draw;
         public event EventHandler<NewLinesEventArgs> NewLines;
+        public event EventHandler<DeleteEventArgs> Delete;
 
         public abstract void MouseDown(MouseEventArgs e);
         public abstract void MouseMove(MouseEventArgs e);
@@ -41,6 +44,11 @@ namespace CanvasComponent.Abstract
         protected virtual void OnNewLines(object sender, NewLinesEventArgs e)
         {
             NewLines?.Invoke(sender, e);
+        }
+
+        protected virtual void OnDelete(object sender, DeleteEventArgs e)
+        {
+            Delete?.Invoke(sender, e);
         }
     }
 }

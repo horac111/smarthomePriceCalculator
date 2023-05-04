@@ -6,6 +6,8 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "SmartHomeCalculator", "Smar
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "CanvasComponent", "CanvasComponent\CanvasComponent.csproj", "{7A434D1C-44FD-46D8-833E-4D44FE5E63E8}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tests", "Tests\Tests.csproj", "{37E797D7-B982-4AD0-9C06-6E4BA5AEB5D4}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -20,6 +22,10 @@ Global
 		{7A434D1C-44FD-46D8-833E-4D44FE5E63E8}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7A434D1C-44FD-46D8-833E-4D44FE5E63E8}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7A434D1C-44FD-46D8-833E-4D44FE5E63E8}.Release|Any CPU.Build.0 = Release|Any CPU
+		{37E797D7-B982-4AD0-9C06-6E4BA5AEB5D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{37E797D7-B982-4AD0-9C06-6E4BA5AEB5D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{37E797D7-B982-4AD0-9C06-6E4BA5AEB5D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{37E797D7-B982-4AD0-9C06-6E4BA5AEB5D4}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

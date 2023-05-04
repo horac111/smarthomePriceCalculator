@@ -28,7 +28,6 @@ namespace CanvasComponent.Service
         public Drawing(IJSRuntime js)
         {
             this.js = js;
-            Task.Run(GetColors);
         }
 
         #region Private
@@ -134,7 +133,7 @@ namespace CanvasComponent.Service
             await batch.StrokeAsync();
         }
 
-        public async Task Draw(int wait = 5)
+        public async Task Draw(int wait = 0)
         {
             if (ctx is null || drawingHelper is null)
                 return;
@@ -166,16 +165,9 @@ namespace CanvasComponent.Service
             }
             finally
             {
-                try
-                {
-                    if (batch is not null)
-                        await batch.DisposeAsync();
-                }
-                catch (TaskCanceledException) { }
-                finally
-                {
-                    drawing.Release();
-                }
+                if (batch is not null)
+                    await batch.DisposeAsync();
+                drawing.Release();
             }
         }
 

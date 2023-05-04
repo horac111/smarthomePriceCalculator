@@ -1,5 +1,7 @@
 ﻿using CanvasComponent.Abstract;
+using CanvasComponent.Enums;
 using CanvasComponent.EventArguments;
+using CanvasComponent.Extensions;
 using CanvasComponent.Service;
 using Microsoft.AspNetCore.Components.Web;
 using Newtonsoft.Json;
@@ -34,7 +36,7 @@ namespace CanvasComponent.Model
 
         public void Initialize(IDrawingHelper helper)
         {
-            this.drawingHelper = helper;
+            this.drawingHelper = helper ?? new DrawingHelper(0,0,0,0);
         }
 
         protected virtual void CalculateTotalPrice()
@@ -65,14 +67,13 @@ namespace CanvasComponent.Model
             if (room is not null && currentDragged != default)
             {
                 room.Devices.Add(currentDragged);
-                CalculateTotalPrice();
                 if (currentDragged.IsCentralUnit)
                 {
                     ContainsCentralUnit = room;
                     foreach (var device in Devices)
                         device.IsVisible = !device.IsCentralUnit;
                 }
-                OnPropertyChanged(nameof(rooms));
+                RoomsChanged();
             }
         }
 
@@ -119,8 +120,6 @@ namespace CanvasComponent.Model
 
             rooms = new(project.Rooms.ToArray());
             Name = project.Name;
-            TotalPrice = project.TotalPrice;
-            RoomsChanged();
         }
 
         private void RoomsChanged()
@@ -128,6 +127,16 @@ namespace CanvasComponent.Model
             OnPropertyChanged(nameof(Rooms));
             OnPropertyChanged(nameof(CanStepForward));
             OnPropertyChanged(nameof(CanStepBackward));
+            CalculateTotalPrice();
         }
+
+        internal protected void OnLinesDeleted(object sender, DeleteEventArgs e)
+        {
+            var deleteRooms = Rooms.Where(x => x.Lines
+                .Any(y => y.DistanceFromPoint(e.Point).NearlyLesserOrEqual(e.Range))).ToArray();
+            rooms.AddRange(deleteRooms, OperationType.Delete);
+            RoomsChanged();
+        }
+
     }
 }

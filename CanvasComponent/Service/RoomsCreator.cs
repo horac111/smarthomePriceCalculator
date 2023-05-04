@@ -1,4 +1,5 @@
 ﻿using CanvasComponent.Abstract;
+using CanvasComponent.Enums;
 using CanvasComponent.EventArguments;
 using CanvasComponent.Extensions;
 using CanvasComponent.Model;
@@ -49,6 +50,18 @@ namespace CanvasComponent.Service
         {
             allLines = new(lines);
             OnPropertyChanged(nameof(AllLines));
+        }
+
+        internal protected override void OnDelete(object sender, DeleteEventArgs e)
+        {
+            var deleteLines = AllLines
+                .Where(x => x.DistanceFromPoint(e.Point).NearlyLesserOrEqual(e.Range))
+                .ToArray();
+            if (deleteLines.Length > 0)
+            {
+                allLines.AddRange(deleteLines, OperationType.Delete);
+                OnLinesDeleted(e);
+            }
         }
     }
 

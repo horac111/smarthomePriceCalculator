@@ -1,7 +1,9 @@
 ﻿using Blazored.Modal;
 using Blazored.Modal.Services;
 using CanvasComponent.Abstract;
+using CanvasComponent.Facade;
 using CanvasComponent.View;
+using Microsoft.JSInterop;
 using System.Reflection;
 using System.Threading.Tasks;
 
@@ -13,10 +15,12 @@ namespace CanvasComponent.Service
     public class NamingService : INamingService
     {
         private IModalService modal;
+        private IJSRuntime js;
 
-        public NamingService(IModalService modal)
+        public NamingService(IJSRuntime js, IModalService modal)
         {
             this.modal = modal;
+            this.js = js;
         }
 
         public async Task<ModalResult> ShowInputText(INamed toName, string text,
@@ -32,7 +36,9 @@ namespace CanvasComponent.Service
                 Position = position
             };
             var inputText = modal.Show<InputText>("Naming room.", param, options);
-            return await inputText.Result;
+            var result = await inputText.Result;
+            await js.InvokeVoidAsync("eval", $"document.getElementById(\"{CanvasFacade.CanvasID}\").focus();");
+            return result;
         }
     }
 }
