@@ -91,6 +91,7 @@ namespace CanvasComponent.Facade
 
         /// <summary>
         /// Indicates whether the deletemode is on
+        /// Delete mode deletes lines and rooms on click in the range given by DeleteRange
         /// </summary>
         public bool DeleteMode
         {
@@ -175,6 +176,14 @@ namespace CanvasComponent.Facade
         }
 
         /// <summary>
+        /// Price of devices grouped by device id
+        /// </summary>
+        public IEnumerable<DevicePriceItem> DevicePrices
+        {
+            get => project.DevicePrices;
+        }
+
+        /// <summary>
         /// Undo or redo
         /// </summary>
         public event EventHandler<StepEventArgs> Step;
@@ -220,6 +229,7 @@ namespace CanvasComponent.Facade
             drawing.NewRoom += OnNewRoom;
             drawByStyle.PropertyChanged += OnPropertyChanged;
             drawing.PropertyChanged += OnPropertyChanged;
+            project.PropertyChanged += OnPropertyChanged;
             Step += project.OnStep;
             Step += roomsCreator.OnStep;
             this.importer = importer;
@@ -294,10 +304,13 @@ namespace CanvasComponent.Facade
             drawing?.Dispose();
             drawByStyle.Draw -= DrawCalled;
             drawByStyle.NewLines -= roomsCreator.NewLines;
+            drawByStyle.Delete -= roomsCreator.OnDelete;
             roomsCreator.RoomsFound -= project.OnRoomsFound;
+            roomsCreator.LinesDeleted -= project.OnLinesDeleted;
             project.NewRooms -= drawing.OnNewRooms;
             drawByStyle.PropertyChanged -= OnPropertyChanged;
             drawing.PropertyChanged -= OnPropertyChanged;
+            project.PropertyChanged -= OnPropertyChanged;
         }
 
         /// <summary>

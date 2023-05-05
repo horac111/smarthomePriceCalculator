@@ -9,8 +9,8 @@
 
 <div class="wrapper" Appearance="Appearance.Filled" tabindex="0" @onkeydown="@CanvasFacade.OnKeyDown">
     <div class="content">
-        <div class="container-flux h-100">
-            <div class="row m-0 h-100">
+        <div class="d-flex flex-column w-100 h-100">
+            <div class="d-flex flex-row m-0 flex-fill">
                 <FluentButton Appearance="Appearance.Neutral" Class="z-2 m-2 position-absolute" @onclick="() => showSidebar ^= true">
                     @if (showSidebar)
                     {
@@ -58,7 +58,25 @@
                         </Stack>
                     </FluentCard>
                 }
-                <Canvas Facade="@CanvasFacade" />
+                <div class="w-75 mr-1">
+                    <Canvas Facade="@CanvasFacade" />
+                </div>
+
+
+                <FluentCard Orientation="Orientation.Vertical" Class="w-25">
+                    <Stack Orientation="Orientation.Vertical">
+                        <h5 class="justify-self-center align-self-center">Selected devices:</h5>
+                        @foreach (var devicePrice in CanvasFacade.DevicePrices)
+                        {
+                            <div class="d-flex flex-row w-100">
+                                <label class="flex-grow-1">@(devicePrice.Count)X</label>
+                            <label class="flex-grow-1">@devicePrice.Name</label>
+                                <label>@(devicePrice.Price)$</label>
+                            </div>
+                        }
+                    </Stack>
+                </FluentCard>
+
             </div>
         </div>
     </div>

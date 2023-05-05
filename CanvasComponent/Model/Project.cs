@@ -2,13 +2,11 @@
 using CanvasComponent.Enums;
 using CanvasComponent.EventArguments;
 using CanvasComponent.Extensions;
-using CanvasComponent.Service;
 using Microsoft.AspNetCore.Components.Web;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace CanvasComponent.Model
 {
@@ -24,6 +22,7 @@ namespace CanvasComponent.Model
 
         public bool CanStepForward { get => rooms.CanStepForward(); }
         public bool CanStepBackward { get => rooms.CanStepBackward(); }
+        public IEnumerable<DevicePriceItem> DevicePrices { get; private set; } = new DevicePriceItem[0];
 
         public double TotalPrice { get; private set; }
 
@@ -34,6 +33,7 @@ namespace CanvasComponent.Model
         private Room ContainsCentralUnit { get; set; }
         private IDrawingHelper drawingHelper;
 
+
         public void Initialize(IDrawingHelper helper)
         {
             this.drawingHelper = helper ?? new DrawingHelper(0,0,0,0);
@@ -41,6 +41,7 @@ namespace CanvasComponent.Model
 
         protected virtual void CalculateTotalPrice()
         {
+            Dictionary<int, DevicePriceItem> devicePrices = new();
             double price = 0;
             foreach (var room in Rooms)
             {
@@ -52,10 +53,21 @@ namespace CanvasComponent.Model
                     else
                         wiring = drawingHelper.ToMeters(Math.Abs(room.Center.X - ContainsCentralUnit.Center.X) +
                             Math.Abs(room.Center.Y - ContainsCentralUnit.Center.Y));
-                    price += device.DeterminPrice(drawingHelper.ToMetersSquared(room.Size), wiring);
+                    var devicePrice = device.DeterminPrice(drawingHelper.ToMetersSquared(room.Size), wiring);
+                    price += devicePrice;
+                    if (devicePrices.ContainsKey(device.Id))
+                    {
+                        devicePrices[device.Id].Count++;
+                        devicePrices[device.Id].Price += devicePrice;
+                    }
+                    else
+                        devicePrices.Add(device.Id, new(device, devicePrice));
                 }
             }
             TotalPrice = price;
+            DevicePrices = devicePrices.Values;
+            OnPropertyChanged(nameof(TotalPrice));
+            OnPropertyChanged(nameof(DevicePrices));
         }
 
         internal protected virtual void OnDragDrop(DragEventArgs e, ISmartDevice currentDragged)
@@ -78,11 +90,13 @@ namespace CanvasComponent.Model
         }
 
         [JsonConstructor]
-        private Project(IEnumerable<Room> rooms, string name, double totalPrice) 
+        private Project(IEnumerable<Room> rooms, string name,
+            double totalPrice, IEnumerable<DevicePriceItem> devicePrices) 
         {
             this.rooms = new(rooms);
             Name = name;
             TotalPrice = totalPrice;
+            DevicePrices = devicePrices;
         }
 
         public Project(IEnumerable<ISmartDevice> devices)
@@ -120,6 +134,7 @@ namespace CanvasComponent.Model
 
             rooms = new(project.Rooms.ToArray());
             Name = project.Name;
+            RoomsChanged();
         }
 
         private void RoomsChanged()

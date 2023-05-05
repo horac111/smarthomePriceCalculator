@@ -106,6 +106,11 @@ namespace CanvasComponent.Abstract
         /// </summary>
         bool CanStepBackward { get; }
 
+        /// <summary>
+        /// Price of devices grouped by device id
+        /// </summary>
+        IEnumerable<DevicePriceItem> DevicePrices { get; }
+
         #endregion
 
         #region Methods

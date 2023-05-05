@@ -7,7 +7,7 @@
 <FluentDesignSystemProvider @ref="designSystemProvider" >
     <CascadingBlazoredModal Position="ModalPosition.BottomLeft">
         <FluentCard class="page" Appearance="Appearance.Filled">
-            <div class="container">
+            <div class="">
                 <div class="row mt-1 mr-1 justify-content-end">
                     <FluentSelect Items=@baseColorOptions
                                   TOption="Option<string>"
@@ -26,7 +26,7 @@
                         }
                     </FluentButton>
                 </div>
-                <div class="main">
+                <div class="main ml-5 mr-5">
                     @Body
                 </div>
             </div>
