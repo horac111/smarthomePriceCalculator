@@ -1,6 +1,4 @@
-﻿@inject IJSRuntime js
-
-<div class="container h-100 w-100 mw-100 mh-100 m-0 d-flex flex-column p-0">
+﻿<div class="container h-100 w-100 mw-100 mh-100 m-0 d-flex flex-column p-0">
     <div class="justify-content-start m-0 flex-grow-1 d-flex flex-row">
         <div id="CanvasContainer" class="p-0 m-0 border-accent flex-grow-1" dropzone="move" ondragover="event.preventDefault()">
             <Excubo.Blazor.Canvas.Canvas id="@CanvasFacade.CanvasID" tabindex="0" width="@(Facade.DrawingHelper?.Width ?? 0)"
@@ -61,3 +59,4 @@
         </div>
     </div>
 </div>
+

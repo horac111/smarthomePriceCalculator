@@ -4,7 +4,7 @@ using Microsoft.AspNetCore.Components.Web;
 
 namespace CanvasComponent.Model
 {
-    internal class DrawingHelper : IDrawingHelper
+    public class DrawingHelper : IDrawingHelper
     {
         public DrawingHelper(double width, double height, double top, double left)
         {

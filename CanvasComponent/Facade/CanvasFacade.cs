@@ -37,7 +37,7 @@ namespace CanvasComponent.Facade
         #endregion
         #region internal
 
-        internal const string CanvasID = "Canvas";
+        public const string CanvasID = "Canvas";
         #endregion
         #region public
         /// <summary>

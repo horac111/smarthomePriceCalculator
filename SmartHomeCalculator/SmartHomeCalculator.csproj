@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Blazored.Modal" Version="7.1.0" />
     <PackageReference Include="bootstrap" Version="5.2.3" />
-    <PackageReference Include="Microsoft.AspNetCore.Components.CustomElements" Version="7.0.4" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.CustomElements" Version="7.0.5" />
     <PackageReference Include="Microsoft.Fast.Components.FluentUI" Version="2.1.4" />
   </ItemGroup>
   <ItemGroup Condition="'$(Configuration)'=='Debug'">
@@ -21,7 +21,7 @@
     <CompilerVisibleProperty Include="FluentEmojiGroups" />
     <CompilerVisibleProperty Include="FluentIconSizes" />
     <CompilerVisibleProperty Include="FluentIconVariants" />
-    
+
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CanvasComponent\CanvasComponent.csproj" />
@@ -38,4 +38,5 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
   </ItemGroup>
+
 </Project>

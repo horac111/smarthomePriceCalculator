@@ -2,19 +2,12 @@
 using CanvasComponent.EventArguments;
 using CanvasComponent.Facade;
 using CanvasComponent.Model;
-using CanvasComponent.Model.JSObjects;
 using Excubo.Blazor.Canvas;
 using Excubo.Blazor.Canvas.Contexts;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.OutputCaching;
 using Microsoft.JSInterop;
-using Newtonsoft.Json.Linq;
 using System;
 using System.Collections.Generic;
 using System.Diagnostics;
-using System.Linq;
-using System.Runtime.CompilerServices;
-using System.Text.Json.Nodes;
 using System.Threading;
 using System.Threading.Tasks;
 

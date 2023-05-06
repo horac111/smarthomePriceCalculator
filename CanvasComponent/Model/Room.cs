@@ -3,6 +3,7 @@ using CanvasComponent.Extensions;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace CanvasComponent.Model
 {
@@ -13,6 +14,13 @@ namespace CanvasComponent.Model
             Lines = lines.ToList().AsReadOnly();
             Size = CalculateSize();
             Center = CalculateCenter();
+        }
+
+        internal Room(IEnumerable<Line> lines, IEnumerable<ISmartDevice> devices, string name)
+            :this(lines)
+        {
+            Devices = devices.ToList();
+            Name = name;
         }
 
         public IReadOnlyList<Line> Lines { get; }
@@ -108,7 +116,7 @@ namespace CanvasComponent.Model
             => Math.Abs(Lines.Sum(x => (x.Start.X + x.End.X) * (x.Start.Y - x.End.Y))) / 2;
 
         public virtual bool Contains(Point point)
-            => /*Insiders.All(x => !x.Contains(point)) &&*/ Lines.ContainsPoint(point);
+            => Lines.ContainsPoint(point);
 
         public virtual bool Contains(Room room)
         {

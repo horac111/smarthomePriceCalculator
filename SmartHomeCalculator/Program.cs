@@ -5,11 +5,13 @@ using CanvasComponent.Model;
 using CanvasComponent.Model.SmartDevice;
 using CanvasComponent.Service;
 using CanvasComponent.View;
+using JSComponentGeneration.React;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Fast.Components.FluentUI;
+using SmartHomeCalculator.Components;
 
 namespace SmartHomeCalculator
 {
@@ -18,7 +20,6 @@ namespace SmartHomeCalculator
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
-
             StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 
             var icon = "data:image/png;base64," +
@@ -65,12 +66,13 @@ namespace SmartHomeCalculator
             builder.Services.AddServerSideBlazor(option =>
             {
                 option.RootComponents.RegisterCustomElement<Canvas>("canvas-component");
+                option.RootComponents.RegisterForReact<Canvas>();
             });
 
             LibraryConfiguration config = new(ConfigurationGenerator.GetIconConfiguration(), ConfigurationGenerator.GetEmojiConfiguration());
             builder.Services.AddFluentUIComponents(config);
             builder.Services.AddBlazoredModal();
-            builder.Services.AddScoped<ICanvasFacade, CanvasFacade>();
+            builder.Services.AddScoped<CanvasFacade>();
             builder.Services.AddSingleton<IEnumerable<ISmartDevice>>(devices);
             builder.Services.AddSingleton<Project>();
 

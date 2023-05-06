@@ -3,7 +3,6 @@ using CanvasComponent.Facade;
 using CanvasComponent.Model.SmartDevice;
 using NUnit.Framework;
 using NUnit.Framework.Constraints;
-using SmartHomeCalculator;
 
 namespace Tests
 {

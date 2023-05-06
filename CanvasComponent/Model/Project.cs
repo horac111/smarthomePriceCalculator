@@ -3,10 +3,10 @@ using CanvasComponent.Enums;
 using CanvasComponent.EventArguments;
 using CanvasComponent.Extensions;
 using Microsoft.AspNetCore.Components.Web;
-using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.Json.Serialization;
 
 namespace CanvasComponent.Model
 {
@@ -36,7 +36,7 @@ namespace CanvasComponent.Model
 
         public void Initialize(IDrawingHelper helper)
         {
-            this.drawingHelper = helper ?? new DrawingHelper(0,0,0,0);
+            this.drawingHelper = helper ?? new DrawingHelper(0, 0, 0, 0);
         }
 
         protected virtual void CalculateTotalPrice()
@@ -89,16 +89,6 @@ namespace CanvasComponent.Model
             }
         }
 
-        [JsonConstructor]
-        private Project(IEnumerable<Room> rooms, string name,
-            double totalPrice, IEnumerable<DevicePriceItem> devicePrices) 
-        {
-            this.rooms = new(rooms);
-            Name = name;
-            TotalPrice = totalPrice;
-            DevicePrices = devicePrices;
-        }
-
         public Project(IEnumerable<ISmartDevice> devices)
         {
             if (devices is null)
@@ -106,6 +96,15 @@ namespace CanvasComponent.Model
             if (devices.GroupBy(x => x.Id).Any(x => x.Count() > 1))
                 throw new ArgumentException("Colection of devices contains duplicate ids.");
             Devices = devices;
+        }
+
+        [JsonConstructor]
+
+        internal Project(IEnumerable<Room> rooms, string name, IEnumerable<ISmartDevice> devices)
+            : this(devices)
+        {
+            this.rooms = new(rooms);
+            Name = name;
         }
 
         public void OnRoomsFound(object sender, RoomsEventArgs e)
@@ -128,8 +127,8 @@ namespace CanvasComponent.Model
         internal protected void UpdateFromProject(Project project)
         {
             var devicesId = Devices.Select(x => x.Id).ToHashSet();
-            foreach (var room in project.Rooms) 
-                foreach(var device in room.Devices.Where(x => !devicesId.Contains(x.Id)))
+            foreach (var room in project.Rooms)
+                foreach (var device in room.Devices.Where(x => !devicesId.Contains(x.Id)))
                     room.Devices.Remove(device);
 
             rooms = new(project.Rooms.ToArray());

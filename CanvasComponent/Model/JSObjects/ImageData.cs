@@ -1,6 +1,6 @@
 ﻿namespace CanvasComponent.Model.JSObjects
 {
-    internal class ImageData
+    public class ImageData
     {
         public string data { get; set; }
         public double height { get; set; }

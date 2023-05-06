@@ -1,7 +1,7 @@
 ﻿using Blazored.Modal;
 using Blazored.Modal.Services;
 
-namespace SmartHomeCalculator
+namespace Tests
 {
     internal class TestingNamingService : INamingService
     {

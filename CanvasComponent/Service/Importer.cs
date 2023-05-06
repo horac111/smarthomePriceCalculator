@@ -1,11 +1,14 @@
 ﻿using CanvasComponent.Abstract;
+using CanvasComponent.Convertors;
 using CanvasComponent.Model;
 using Microsoft.AspNetCore.Components.Forms;
 using Microsoft.JSInterop;
-using Newtonsoft.Json;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace CanvasComponent.Service
@@ -16,17 +19,22 @@ namespace CanvasComponent.Service
     public class Importer : IImporter
     {
         private IJSRuntime js;
-        private readonly JsonSerializerSettings jsonSettings = new()
+        private readonly JsonSerializerOptions jsonSettings = new()
         {
-            TypeNameHandling = TypeNameHandling.All,
-            Formatting = Formatting.Indented,
-            NullValueHandling = NullValueHandling.Ignore,
+            WriteIndented = true,
+            IgnoreReadOnlyProperties = true,
+            DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+            IncludeFields = true
         };
 
         public Importer(IJSRuntime js)
         {
             this.js = js;
             Task.Run(CreateBlazorDownloadFile);
+            jsonSettings.Converters.Add(new ProjectConverter());
+            jsonSettings.Converters.Add(new ISmartDeviceConverter());
+            jsonSettings.Converters.Add(new LineConverter());
+            jsonSettings.Converters.Add(new RoomConverter());
         }
 
         private async Task CreateBlazorDownloadFile()
@@ -42,7 +50,8 @@ namespace CanvasComponent.Service
 
         public async Task ExportJson(Project project)
         {
-            var json = JsonConvert.SerializeObject(project, jsonSettings);
+            
+            var json = JsonSerializer.Serialize(project, jsonSettings);
             await js.InvokeVoidAsync("BlazorDownloadFile", GetName(project.Name, ".json"), "text/plain", json);
         }
 
@@ -61,7 +70,7 @@ namespace CanvasComponent.Service
                 file = ms.ToArray();
             }
             string json = Encoding.UTF8.GetString(file);
-            var newProject = JsonConvert.DeserializeObject<Project>(json, jsonSettings);
+            var newProject = JsonSerializer.Deserialize<Project>(json, jsonSettings);
             project.UpdateFromProject(newProject);
             roomsCreator.UpdateFromLines(newProject.Rooms.SelectMany(x => x.Lines).ToArray());
         }
