@@ -2,7 +2,10 @@
 @using System.Text.Json;
 @using System.Text.Json.Serialization;
 @using CanvasComponent.Convertors;
+@using CanvasComponent.Facade;
 @using CanvasComponent.Model;
+@using CanvasComponent.View;
+@inject CanvasFacade CanvasFacade;
 
 <PageTitle>Index</PageTitle>
 
@@ -14,7 +17,7 @@
 
 <FluentDesignSystemProvider FillColor="#D6D6D6">
     <FluentCard neutral-palette-source="#CABA8C">
-        <SurveyPrompt Title="How is Blazor working for you?" />
+        <Canvas Facade="@CanvasFacade"  />
     </FluentCard>
 </FluentDesignSystemProvider>
 

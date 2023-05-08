@@ -25,6 +25,7 @@
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\CanvasComponent\CanvasComponent.csproj" />
+    <ProjectReference Include="..\JSComponentGeneration\JSComponentGeneration.csproj" />
   </ItemGroup>
 
   <ItemGroup>
