@@ -5,7 +5,7 @@
 @using CanvasComponent.Facade;
 @using CanvasComponent.Model;
 @using CanvasComponent.View;
-@inject CanvasFacade CanvasFacade;
+@inject Project Project;
 
 <PageTitle>Index</PageTitle>
 
@@ -17,8 +17,26 @@
 
 <FluentDesignSystemProvider FillColor="#D6D6D6">
     <FluentCard neutral-palette-source="#CABA8C">
-        <Canvas Facade="@CanvasFacade"  />
+        <CanvasContainer Project="@project" />
     </FluentCard>
 </FluentDesignSystemProvider>
 
+@code {
+    private string project;
+
+    protected override void OnParametersSet()
+    {
+        JsonSerializerOptions options = new()
+            {
+                IgnoreReadOnlyProperties = true,
+                DefaultIgnoreCondition = JsonIgnoreCondition.WhenWritingNull,
+                IncludeFields = true
+            };
+        options.Converters.Add(new ProjectConverter());
+        options.Converters.Add(new ISmartDeviceConverter());
+        options.Converters.Add(new LineConverter());
+        options.Converters.Add(new RoomConverter());
+        project = JsonSerializer.Serialize(Project, options);
+    }
+}
 

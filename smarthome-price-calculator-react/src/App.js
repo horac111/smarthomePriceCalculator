@@ -10,7 +10,7 @@ function App() {
   useEffect(() => { setTimeout(() => setShouldRenderCanvas(true), 5000);});
   return (
     <div className="App">
-      <header className="App-header">
+      <header className="App-header h-100 w-100">
            { shouldRenderCanvas ? <CanvasContainer project={ JSON.stringify(project)} /> : null}
       </header>
     </div>

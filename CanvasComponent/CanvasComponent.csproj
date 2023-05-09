@@ -12,7 +12,7 @@
     <PackageReference Include="Blazored.Modal" Version="7.1.0" />
     <PackageReference Include="Excubo.Blazor.Canvas" Version="3.2.20" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.5" />
-    <PackageReference Include="Microsoft.Fast.Components.FluentUI" Version="2.1.4" />
+    <PackageReference Include="Microsoft.Fast.Components.FluentUI" Version="2.3.0" />
     <PackageReference Include="PropertyChanged.Fody" Version="4.1.0" PrivateAssets="All" />
   </ItemGroup>
 
