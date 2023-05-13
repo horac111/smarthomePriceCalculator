@@ -1,0 +1,51 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.BlazorWebAssembly">
+
+  <PropertyGroup>
+    <TargetFramework>net7.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <RootNamespace>SmartHomePriceCalculatorWasm</RootNamespace>
+    <IsPackable>true</IsPackable>
+  </PropertyGroup>
+  <PropertyGroup>
+    <PublishFluentIconAssets>true</PublishFluentIconAssets>
+    <PublishFluentEmojiAssets>true</PublishFluentEmojiAssets>
+  </PropertyGroup>
+  <ItemGroup Condition="'$(Configuration)'=='Debug'">
+    <CompilerVisibleProperty Include="PublishFluentIconAssets" />
+    <CompilerVisibleProperty Include="PublishFluentEmojiAssets" />
+    <CompilerVisibleProperty Include="FluentEmojiStyles" />
+    <CompilerVisibleProperty Include="FluentEmojiGroups" />
+    <CompilerVisibleProperty Include="FluentIconSizes" />
+    <CompilerVisibleProperty Include="FluentIconVariants" />
+
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Blazored.Modal" Version="7.1.0" />
+    <PackageReference Include="bootstrap" Version="5.2.3" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.CustomElements" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.5" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="7.0.5" />
+    <PackageReference Include="Microsoft.Fast.Components.FluentUI" Version="2.3.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\JSGeneration\JSComponentGeneration\JSComponentGeneration.csproj" />
+    <ProjectReference Include="..\..\SharedComponents\CanvasComponent\CanvasComponent.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="wwwroot\img\idea.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Update="wwwroot\img\eraser.png">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
+</Project>

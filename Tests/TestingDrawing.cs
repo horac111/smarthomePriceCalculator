@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Tests
+namespace CanvasComponentTests
 {
     internal class TestingDrawing : IDrawing
     {
@@ -15,11 +15,11 @@ namespace Tests
         public bool ShowGrid { get; set; }
         public double Thickness { get; set; }
 
-        public event PropertyChangedEventHandler? PropertyChanged;
+        public event PropertyChangedEventHandler PropertyChanged;
 
         public void Dispose()
         {
-            
+
         }
 
         public async Task Draw(int wait = 5)
@@ -39,7 +39,7 @@ namespace Tests
 
         public void OnNewRooms(object sender, RoomsEventArgs e)
         {
-            
+
         }
     }
 }

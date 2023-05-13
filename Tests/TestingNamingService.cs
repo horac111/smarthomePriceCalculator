@@ -1,7 +1,7 @@
 ﻿using Blazored.Modal;
 using Blazored.Modal.Services;
 
-namespace Tests
+namespace CanvasComponentTests
 {
     internal class TestingNamingService : INamingService
     {
