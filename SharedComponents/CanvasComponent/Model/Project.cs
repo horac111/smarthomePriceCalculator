@@ -45,40 +45,33 @@ namespace CanvasComponent.Model
 
         protected virtual void CalculateTotalPrice()
         {
-            try
+            Dictionary<int, DevicePriceItem> devicePrices = new();
+            double price = 0;
+            foreach (var room in Rooms)
             {
-                Dictionary<int, DevicePriceItem> devicePrices = new();
-                double price = 0;
-                foreach (var room in Rooms)
+                foreach (var device in room.Devices)
                 {
-                    foreach (var device in room.Devices)
+                    double wiring;
+                    if ((ContainsCentralUnit is null || room == ContainsCentralUnit))
+                        wiring = drawingHelper.ToMeters(room.Lines.Max(x => x.Length()));
+                    else
+                        wiring = drawingHelper.ToMeters(Math.Abs(room.Center.X - ContainsCentralUnit.Center.X) +
+                            Math.Abs(room.Center.Y - ContainsCentralUnit.Center.Y));
+                    var devicePrice = device.DeterminPrice(drawingHelper.ToMetersSquared(room.Size), wiring);
+                    price += devicePrice;
+                    if (devicePrices.ContainsKey(device.Id))
                     {
-                        double wiring;
-                        if ((ContainsCentralUnit is null || room == ContainsCentralUnit))
-                            wiring = drawingHelper.ToMeters(room.Lines.Max(x => x.Length()));
-                        else
-                            wiring = drawingHelper.ToMeters(Math.Abs(room.Center.X - ContainsCentralUnit.Center.X) +
-                                Math.Abs(room.Center.Y - ContainsCentralUnit.Center.Y));
-                        var devicePrice = device.DeterminPrice(drawingHelper.ToMetersSquared(room.Size), wiring);
-                        price += devicePrice;
-                        if (devicePrices.ContainsKey(device.Id))
-                        {
-                            devicePrices[device.Id].Count++;
-                            devicePrices[device.Id].Price += devicePrice;
-                        }
-                        else
-                            devicePrices.Add(device.Id, new(device, devicePrice));
+                        devicePrices[device.Id].Count++;
+                        devicePrices[device.Id].Price += devicePrice;
                     }
+                    else
+                        devicePrices.Add(device.Id, new(device, devicePrice));
                 }
-                TotalPrice = price;
-                DevicePrices = devicePrices.Values;
-                OnPropertyChanged(nameof(TotalPrice));
-                OnPropertyChanged(nameof(DevicePrices));
             }
-           catch(Exception ex)
-            {
-                throw new Exception(ex.StackTrace);
-            }
+            TotalPrice = price;
+            DevicePrices = devicePrices.Values;
+            OnPropertyChanged(nameof(TotalPrice));
+            OnPropertyChanged(nameof(DevicePrices));
         }
 
         internal protected virtual void OnDragDrop(DragEventArgs e, ISmartDevice currentDragged)
@@ -125,7 +118,6 @@ namespace CanvasComponent.Model
         {
             var toAdd = e.Rooms.Except(rooms).ToList();
             rooms.AddRange(toAdd);
-            RoomsChanged();
             if (toAdd.Count() != 0)
             {
                 NewRooms.Invoke(this, new(toAdd));
@@ -152,16 +144,14 @@ namespace CanvasComponent.Model
 
             rooms = new(project.Rooms.ToArray());
             Name = project.Name;
-            
+
             RoomsChanged();
         }
 
         private void RoomsChanged()
         {
-            OnPropertyChanged(nameof(Rooms));
-            OnPropertyChanged(nameof(CanStepForward));
-            OnPropertyChanged(nameof(CanStepBackward));
             CalculateTotalPrice();
+            OnPropertyChanged(nameof(Project));
         }
 
         internal protected void OnLinesDeleted(object sender, DeleteEventArgs e)

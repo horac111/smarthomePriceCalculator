@@ -38,15 +38,15 @@ namespace CanvasComponent.Converters
         public override void Write(Utf8JsonWriter writer, Line value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
-            writer.WritePropertyName(nameof(Line.Start));
+            writer.WritePropertyName(nameof(Line.Start).ToLower()) ;
             writer.WriteStartObject();
-            writer.WriteNumber("X", value.Start.X);
-            writer.WriteNumber("Y", value.Start.Y);
+            writer.WriteNumber("x", value.Start.X);
+            writer.WriteNumber("y", value.Start.Y);
             writer.WriteEndObject();
-            writer.WritePropertyName(nameof(Line.End));
+            writer.WritePropertyName(nameof(Line.End).ToLower());
             writer.WriteStartObject();
-            writer.WriteNumber("X", value.End.X);
-            writer.WriteNumber("Y", value.End.Y);
+            writer.WriteNumber("x", value.End.X);
+            writer.WriteNumber("y", value.End.Y);
             writer.WriteEndObject();
             writer.WriteEndObject();
         }

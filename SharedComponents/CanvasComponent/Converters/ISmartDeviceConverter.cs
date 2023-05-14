@@ -44,8 +44,8 @@ namespace CanvasComponent.Converters
             };
 
             writer.WriteStartObject();
-            writer.WriteNumber("DeviceType", deviceType);
-            writer.WritePropertyName("Device");
+            writer.WriteNumber("deviceType", deviceType);
+            writer.WritePropertyName("device");
 
             if (value is DevicesPerMeterSmartDevice perMeter)
                 JsonSerializer.Serialize(writer, perMeter, options);

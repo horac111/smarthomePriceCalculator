@@ -21,19 +21,15 @@ namespace CanvasComponent.Converters
                 reader.Read();
                 if (reader.TokenType != JsonTokenType.PropertyName)
                     throw new FormatException("Expected property name");
-                var propertyName = reader.GetString();
+                var propertyName = reader.GetString().ToLower();
                 reader.Read();
-                switch (propertyName)
-                {
-                    case nameof(INamedValue<int>.Name):
-                        name = reader.GetString();
-                        break;
-                    case nameof(INamedValue<int>.Value):
-                        value = reader.GetInt32();
-                        break;
-                    default:
-                        throw new FormatException("Unknown format");
-                }
+                if (propertyName == nameof(INamedValue<int>.Name).ToLower())
+                    name = reader.GetString();
+                else if (propertyName == nameof(INamedValue<int>.Value).ToLower())
+                    value = reader.GetInt32();
+                else
+                    throw new FormatException("Unknown format");
+
             }
             reader.Read();
             if (reader.TokenType != JsonTokenType.EndObject)
@@ -44,8 +40,8 @@ namespace CanvasComponent.Converters
         public override void Write(Utf8JsonWriter writer, INamedValue<int> value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
-            writer.WriteString(nameof(INamedValue<int>.Name), value.Name);
-            writer.WriteNumber(nameof(INamedValue<int>.Value), value.Value);
+            writer.WriteString(nameof(INamedValue<int>.Name).ToLower(), value.Name);
+            writer.WriteNumber(nameof(INamedValue<int>.Value).ToLower(), value.Value);
             writer.WriteEndObject();
         }
     }

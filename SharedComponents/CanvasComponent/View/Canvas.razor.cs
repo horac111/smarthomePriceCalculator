@@ -12,6 +12,7 @@ using System.Net.NetworkInformation;
 using System.Text.Json.Serialization;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System;
 
 namespace CanvasComponent.View
 {
@@ -20,12 +21,11 @@ namespace CanvasComponent.View
         [Parameter]
         public CanvasFacade Facade { get; init; }
 
-        private bool isAfterRender;
-
 
         [Inject]
         public IJSRuntime JS { get; set; }
 
+        private Excubo.Blazor.Canvas.Canvas canvas;
 
 
         protected override void OnInitialized()
@@ -45,6 +45,8 @@ namespace CanvasComponent.View
                  $"let e = document.querySelector(\"#CanvasContainer\"); e = e.getBoundingClientRect();  e");
                 Facade.DrawingHelper = new DrawingHelper(rect);
             }
+            if (Facade.Canvas is null)
+                Facade.Canvas = canvas;
             await Facade.OnAfterRender(firstRender);
         }
 

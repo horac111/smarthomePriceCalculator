@@ -33,7 +33,7 @@ namespace CanvasComponent.Facade
         private INamingService namingService;
         private IImporter importer;
 
-
+        private bool initialized;
 
         private DragAndDropService<ISmartDevice> dragAndDrop;
         #endregion
@@ -201,6 +201,7 @@ namespace CanvasComponent.Facade
             drawByStyle = new DrawByStyle();
             roomsCreator = new RoomsCreator();
             drawing = new Drawing();
+            dragAndDrop = new();
         }
 
         public CanvasFacade(Project project, IJSRuntime js, IModalService modalService)
@@ -244,16 +245,21 @@ namespace CanvasComponent.Facade
         /// <returns></returns>
         public async Task OnAfterRender(bool firstTime)
         {
-            if (firstTime)
+            if (drawing is not null)
             {
+                if (!initialized && Project is not null)
+                {
+                    initialized = true;
 
-                if (string.IsNullOrEmpty(Project.Name))
-                    await namingService.ShowInputText(Project, "Project name:", ModalPosition.Middle);
+                    await drawing.Initialize(DrawingHelper, Project, drawByStyle, roomsCreator);
+                    Project.Initialize(DrawingHelper);
 
-                await drawing.Initialize(DrawingHelper, Project, drawByStyle, roomsCreator);
-                Project.Initialize(DrawingHelper);
+                    if (string.IsNullOrEmpty(Project.Name) && namingService is not null)
+                        await namingService.ShowInputText(Project, "Project name:", ModalPosition.Middle);
+                }
+                await drawing.Draw(0);
             }
-            await drawing.Draw(0);
+
         }
 
         /// <summary>
@@ -278,7 +284,7 @@ namespace CanvasComponent.Facade
         /// </summary>
         /// <param name="js"></param>
         /// <param name="service"></param>
-        public async Task Initialize(IJSRuntime js, IModalService service)
+        public void Initialize(IJSRuntime js, IModalService service)
         {
             Drawing newDrawing = new(js)
             {
@@ -290,8 +296,11 @@ namespace CanvasComponent.Facade
             drawing = newDrawing;
             importer = new Importer(js);
             namingService = new NamingService(js, service);
+            this.js = js;
             InitializeEvents();
         }
+
+        private IJSRuntime js;
 
         /// <summary>
         /// Initializes events between components
@@ -341,7 +350,7 @@ namespace CanvasComponent.Facade
 
         public void Dispose()
         {
-            drawing?.Dispose();
+            namingService?.Dispose();
             drawByStyle.Draw -= DrawCalled;
             drawByStyle.NewLines -= roomsCreator.NewLines;
             drawByStyle.Delete -= roomsCreator.OnDelete;
@@ -351,6 +360,7 @@ namespace CanvasComponent.Facade
             drawByStyle.PropertyChanged -= OnPropertyChanged;
             drawing.PropertyChanged -= OnPropertyChanged;
             Project.PropertyChanged -= OnPropertyChanged;
+            drawing?.Dispose();
         }
 
         /// <summary>

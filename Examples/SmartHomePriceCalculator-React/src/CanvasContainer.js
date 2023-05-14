@@ -1,10 +1,10 @@
 import { useBlazor } from './blazor-react';
 
 export function CanvasContainer({
-  facadeWrapper,
+  facadeWrapper, facadeWrapperChanged,
 }) {
   const fragment = useBlazor('canvas-container', {
-    facadeWrapper,
+    facadeWrapper, facadeWrapperChanged,
   });
 
   return fragment;

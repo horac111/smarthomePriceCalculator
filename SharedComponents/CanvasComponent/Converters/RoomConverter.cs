@@ -30,11 +30,11 @@ namespace CanvasComponent.Converters
         public override void Write(Utf8JsonWriter writer, Room value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
-            writer.WritePropertyName(nameof(Room.Lines));
+            writer.WritePropertyName(nameof(Room.Lines).ToLower());
             JsonSerializer.Serialize(writer, value.Lines, options);
-            writer.WritePropertyName(nameof(Room.Devices));
+            writer.WritePropertyName(nameof(Room.Devices).ToLower());
             JsonSerializer.Serialize(writer, value.Devices, options);
-            writer.WriteString(nameof(Room.Name), value.Name);
+            writer.WriteString(nameof(Room.Name).ToLower(), value.Name);
             writer.WriteEndObject();
         }
     }

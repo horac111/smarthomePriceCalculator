@@ -25,42 +25,40 @@ namespace SmartHomeCalculator
             var builder = WebApplication.CreateBuilder(args);
             StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 
-            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img", "idea.png");
-            var icon = "data:image/png;base64," +
-                Convert.ToBase64String(File.ReadAllBytes(path));
+            var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img");
             var devices = new List<ISmartDevice>()
             {
                 new PricePerMeterSmartDevice()
                 {
                     Id = 0,
                     Price = 10,
-                    Icon = icon,
-                    Name = "10 per meter"
+                    Icon = GetIcon(path, "heating.png"),
+                    Name = "Heating"
                 },
                 new DevicesPerMeterSmartDevice()
                 {
                     Id = 1,
                     Price = 10,
                     DevicesPerMeter = 3,
-                    Icon = icon,
-                    Name = "3 devices per meter"
+                    Icon = GetIcon(path, "speakers.png"),
+                    Name = "Speakers"
                 },
                 new WiredFromCentralUnitSmartDevice()
                 {
                     Id = 2,
                     BasePrice = 10,
                     Price = 10,
-                    Icon = icon,
-                    Name = "from central unit"
+                    Icon = GetIcon(path, "camera.png"),
+                    Name = "Surveilence system"
                 },
                 new DevicesPerRoomSmartDevice()
                 {
                     Id = 3,
                     Price = 10,
-                    DevicesInRoom = 2,
-                    Icon = icon,
+                    DevicesInRoom = 1,
+                    Icon = GetIcon(path, "centralUnit.png"),
                     IsCentralUnit = true,
-                    Name = "2 devices in room also cental unit"
+                    Name = "Control panel"
                 }
             };
 
@@ -103,6 +101,8 @@ namespace SmartHomeCalculator
             app.Run();
         }
 
-        
+        private static string GetIcon(string path, string name)
+            => "data:image/png;base64," + 
+            Convert.ToBase64String(File.ReadAllBytes(Path.Combine(path, name)));
     }
 }

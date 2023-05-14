@@ -19,7 +19,7 @@ namespace CanvasComponent.Abstract
         void Dispose();
         Task Draw(int wait = 5);
         ValueTask<string> GetCanvasAsImage();
-        Task Initialize(IDrawingHelper drawingHelper, Project project, IDrawByStyle drawByStyle, IRoomsCreator roomsCreator);
+        Task<bool> Initialize(IDrawingHelper drawingHelper, Project project, IDrawByStyle drawByStyle, IRoomsCreator roomsCreator);
         void OnNewRooms(object sender, RoomsEventArgs e);
     }
 }

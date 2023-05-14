@@ -147,7 +147,7 @@ namespace CanvasComponent.Service
                 await batch.LineWidthAsync(Thickness);
 
                 await ClearCanvas(batch);
-                await js.InvokeVoidAsync("eval", "console.log(\"started fucking drawing\")");
+
                 foreach (var line in roomsCreator.AllLines)
                     await DrawLine(line, noRoomColor, batch);
 
@@ -168,18 +168,23 @@ namespace CanvasComponent.Service
             }
         }
 
-        public async Task Initialize(IDrawingHelper drawingHelper, Project project,
+        public async Task<bool> Initialize(IDrawingHelper drawingHelper, Project project,
             IDrawByStyle drawByStyle, IRoomsCreator roomsCreator)
         {
-            ctx = await Canvas.GetContext2DAsync();
-            drawing = new(1, 1);
-            await ctx.LineJoinAsync(LineJoin.Round);
-            await ctx.LineCapAsync(LineCap.Round);
-            this.drawingHelper = drawingHelper;
-            this.drawByStyle = drawByStyle;
-            this.roomsCreator = roomsCreator;
-            this.project = project;
-            await Draw(1000);
+            if(Canvas is not null)
+            {
+                ctx = await Canvas.GetContext2DAsync();
+                drawing = new(1, 1);
+                await ctx.LineJoinAsync(LineJoin.Round);
+                await ctx.LineCapAsync(LineCap.Round);
+                this.drawingHelper = drawingHelper;
+                this.drawByStyle = drawByStyle;
+                this.roomsCreator = roomsCreator;
+                this.project = project;
+                await Draw(1000);
+                return true;
+            }
+            return false;
         }
 
         public async ValueTask<string> GetCanvasAsImage()
@@ -195,7 +200,8 @@ namespace CanvasComponent.Service
 
         private async Task GetColors()
         {
-            if (!lastColorChange.IsRunning || lastColorChange.Elapsed > colorChangingFrequency)
+            if ((!lastColorChange.IsRunning || lastColorChange.Elapsed > colorChangingFrequency) &&
+                js is not null)
             {
                 List<Task> tasks = new();
                 lastColorChange.Restart();

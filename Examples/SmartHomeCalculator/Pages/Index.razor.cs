@@ -1,5 +1,6 @@
 ﻿using CanvasComponent.Converters;
 using CanvasComponent.Facade;
+using CanvasComponent.Model;
 using Microsoft.AspNetCore.Components;
 using System.Text.Json;
 
@@ -17,10 +18,11 @@ namespace SmartHomeCalculator.Pages
             CanvasFacade.PropertyChanged += (s, e) => InvokeAsync(StateHasChanged);
             JsonSerializerOptions options = new JsonSerializerOptions()
             {
-                // WriteIndented = true
+                 WriteIndented = true
             };
             options.Converters.Add(new CanvasFacadeConverter());
-            var a = JsonSerializer.Deserialize<CanvasFacade>(JsonSerializer.Serialize(CanvasFacade, options), options);
+            CanvasFacade.DrawingHelper = new DrawingHelper(0, 0, 0, 0);
+            var a = JsonSerializer.Serialize(CanvasFacade, options);
             base.OnInitialized();
         }
     }

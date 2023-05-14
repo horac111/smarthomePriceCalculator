@@ -22,17 +22,17 @@ namespace CanvasComponent.Converters
                 if (reader.TokenType != JsonTokenType.PropertyName)
                     throw new FormatException("Expected property name");
 
-                var propertyName = reader.GetString();
+                var propertyName = reader.GetString().ToLower();
                 reader.Read();
-                if (propertyName == nameof(IDrawingHelper.Top))
+                if (propertyName == nameof(IDrawingHelper.Top).ToLower())
                     top = reader.GetDouble();
-                else if (propertyName == nameof(IDrawingHelper.Left))
+                else if (propertyName == nameof(IDrawingHelper.Left).ToLower())
                     left = reader.GetDouble();
-                else if (propertyName == nameof(IDrawingHelper.Height))
+                else if (propertyName == nameof(IDrawingHelper.Height).ToLower())
                     height = reader.GetDouble();
-                else if (propertyName == nameof(IDrawingHelper.Width))
+                else if (propertyName == nameof(IDrawingHelper.Width).ToLower())
                     width = reader.GetDouble();
-                else if (propertyName == nameof(IDrawingHelper.PixelsToMeter))
+                else if (propertyName == nameof(IDrawingHelper.PixelsToMeter).ToLower())
                     pixelsToMeter = reader.GetDouble();
                 else
                     throw new FormatException("Unknown format");
@@ -46,11 +46,11 @@ namespace CanvasComponent.Converters
         public override void Write(Utf8JsonWriter writer, IDrawingHelper value, JsonSerializerOptions options)
         {
             writer.WriteStartObject();
-            writer.WriteNumber(nameof(IDrawingHelper.Left), value.Left);
-            writer.WriteNumber(nameof(IDrawingHelper.PixelsToMeter), value.PixelsToMeter);
-            writer.WriteNumber(nameof(IDrawingHelper.Height), value.Height);
-            writer.WriteNumber(nameof(IDrawingHelper.Width), value.Width);
-            writer.WriteNumber(nameof(IDrawingHelper.Top), value.Top);
+            writer.WriteNumber(nameof(IDrawingHelper.Left).ToLower(), value.Left);
+            writer.WriteNumber("pixelsToMeter", value.PixelsToMeter);
+            writer.WriteNumber(nameof(IDrawingHelper.Height).ToLower(), value.Height);
+            writer.WriteNumber(nameof(IDrawingHelper.Width).ToLower(), value.Width);
+            writer.WriteNumber(nameof(IDrawingHelper.Top).ToLower(), value.Top);
             writer.WriteEndObject();
         }
     }

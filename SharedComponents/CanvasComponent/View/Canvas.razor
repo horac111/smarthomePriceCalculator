@@ -5,7 +5,7 @@
                                          height="@(Facade.DrawingHelper?.Height ?? 0)"
                                          @onmousemove="@Facade.OnMouseMove" @onmousedown="@Facade.OnMouseDown"
                                          @ondrop="@(e => Facade.OnDragDrop(e, "CanvasContainer"))"
-                                         @ref="@Facade.Canvas" draggable="false"  
+                                         @ref="canvas" draggable="false"  
                                          style="@((Facade.DeleteMode ? "cursor: url(img/eraser.png), auto" : "cursor: default"))" />
         </div>
 

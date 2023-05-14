@@ -4,7 +4,10 @@ using CanvasComponent.Abstract;
 using CanvasComponent.Facade;
 using CanvasComponent.View;
 using Microsoft.JSInterop;
+using System;
 using System.Reflection;
+using System.Text.Json;
+using System.Threading;
 using System.Threading.Tasks;
 
 namespace CanvasComponent.Service
@@ -16,11 +19,17 @@ namespace CanvasComponent.Service
     {
         private IModalService modal;
         private IJSRuntime js;
-
+        private CancellationTokenSource cts = new();
         public NamingService(IJSRuntime js, IModalService modal)
         {
             this.modal = modal;
             this.js = js;
+        }
+
+        public void Dispose()
+        {
+            cts.Cancel();
+            cts.Dispose();
         }
 
         public async Task<ModalResult> ShowInputText(INamed toName, string text,
@@ -35,10 +44,27 @@ namespace CanvasComponent.Service
             {
                 Position = position
             };
-            var inputText = modal.Show<InputText>("Naming room.", param, options);
-            var result = await inputText.Result;
-            await js.InvokeVoidAsync("eval", $"document.getElementById(\"{CanvasFacade.CanvasID}\").focus();");
-            return result;
+            IModalReference inputText = null;
+            ModalResult result = null;
+            var wait = Task.Run(async () =>
+            {
+                while (result is null && !cts.IsCancellationRequested)
+                    await Task.Delay(100);
+            });
+            var show = Task.Run(async () =>
+            {
+                cts.Token.ThrowIfCancellationRequested();
+                inputText = modal.Show<InputText>("Naming room.", param, options);
+                result = await inputText.Result;
+                await js.InvokeVoidAsync("eval", $"document.getElementById(\"{CanvasFacade.CanvasID}\").focus();");
+            }, cts.Token);
+
+            await Task.WhenAny(wait, show);
+            if (result is not null)
+                return result;
+
+            inputText?.Close();
+            return ModalResult.Cancel();
         }
     }
 }

@@ -22,6 +22,7 @@ namespace CanvasComponent.Converters
             newOptions.Converters.Add(new ProjectConverter());
             newOptions.Converters.Add(new INamedValueConverter());
             newOptions.Converters.Add(new IDrawingHelperConverter());
+            newOptions.Converters.Add(new DevicePriceItemConverter());
             CanvasFacade facade = new();
 
             while (reader.Read())
@@ -32,14 +33,14 @@ namespace CanvasComponent.Converters
                 if (reader.TokenType != JsonTokenType.PropertyName)
                     throw new FormatException("Expected property name");
 
-                var propertyName = reader.GetString();
-                if (propertyName == nameof(CanvasFacade.Project))
+                var propertyName = reader.GetString().ToLower();
+                if (propertyName == nameof(CanvasFacade.Project).ToLower())
                     facade.Project = JsonSerializer.Deserialize<Project>(ref reader, newOptions);
-                else if (propertyName == nameof(CanvasFacade.DevicePrices))
+                else if (propertyName == nameof(CanvasFacade.DevicePrices).ToLower())
                     JsonSerializer.Deserialize<IEnumerable<DevicePriceItem>>(ref reader, newOptions);
-                else if (propertyName == nameof(CanvasFacade.DrawingTypes))
+                else if (propertyName == nameof(CanvasFacade.DrawingTypes).ToLower())
                     JsonSerializer.Deserialize<IEnumerable<INamedValue<int>>>(ref reader, newOptions);
-                else if (propertyName == nameof(CanvasFacade.DrawingHelper))
+                else if (propertyName == nameof(CanvasFacade.DrawingHelper).ToLower())
                     facade.DrawingHelper = JsonSerializer.Deserialize<IDrawingHelper>(ref reader, newOptions);
                 else
                     ReadProperties(propertyName, ref reader, facade);
@@ -55,21 +56,21 @@ namespace CanvasComponent.Converters
         private void ReadProperties(string propertyName, ref Utf8JsonReader reader, CanvasFacade facade)
         {
             reader.Read();
-            if (propertyName == nameof(CanvasFacade.SelectedDrawingStyle))
+            if (propertyName == nameof(CanvasFacade.SelectedDrawingStyle).ToLower())
                 facade.SelectedDrawingStyle = reader.GetInt32();
-            else if (propertyName == nameof(CanvasFacade.GridDensity))
+            else if (propertyName == nameof(CanvasFacade.GridDensity).ToLower())
                 facade.GridDensity = reader.GetDouble();
-            else if (propertyName == nameof(CanvasFacade.AutoComplete))
+            else if (propertyName == nameof(CanvasFacade.AutoComplete).ToLower())
                 facade.AutoComplete = reader.GetDouble();
-            else if (propertyName == nameof(CanvasFacade.Thickness))
+            else if (propertyName == nameof(CanvasFacade.Thickness).ToLower())
                 facade.Thickness = reader.GetDouble();
-            else if (propertyName == nameof(CanvasFacade.DeleteRange))
+            else if (propertyName == nameof(CanvasFacade.DeleteRange).ToLower())
                 facade.DeleteRange = reader.GetDouble();
-            else if (propertyName == nameof(CanvasFacade.SnapToGrid))
+            else if (propertyName == nameof(CanvasFacade.SnapToGrid).ToLower())
                 facade.SnapToGrid = reader.GetBoolean();
-            else if (propertyName == nameof(CanvasFacade.ShowGrid))
+            else if (propertyName == nameof(CanvasFacade.ShowGrid).ToLower())
                 facade.ShowGrid = reader.GetBoolean();
-            else if (propertyName == nameof(CanvasFacade.DeleteMode))
+            else if (propertyName == nameof(CanvasFacade.DeleteMode).ToLower())
                 facade.DeleteMode = reader.GetBoolean();
             else
                 throw new FormatException("Unexpected property");
@@ -81,23 +82,24 @@ namespace CanvasComponent.Converters
             newOptions.Converters.Add(new ProjectConverter());
             newOptions.Converters.Add(new IDrawingHelperConverter());
             newOptions.Converters.Add(new INamedValueConverter());
+            newOptions.Converters.Add(new DevicePriceItemConverter());
             writer.WriteStartObject();
-            writer.WritePropertyName(nameof(CanvasFacade.Project));
+            writer.WritePropertyName(nameof(CanvasFacade.Project).ToLower());
             JsonSerializer.Serialize(writer, value.Project, newOptions);
-            writer.WritePropertyName(nameof(CanvasFacade.DevicePrices));
+            writer.WritePropertyName("devicePrices");
             JsonSerializer.Serialize(writer, value.DevicePrices, newOptions);
-            writer.WritePropertyName(nameof(CanvasFacade.DrawingTypes));
+            writer.WritePropertyName("drawingTypes");
             JsonSerializer.Serialize(writer, value.DrawingTypes, newOptions);
-            writer.WritePropertyName(nameof(CanvasFacade.DrawingHelper));
+            writer.WritePropertyName("drawingHelper");
             JsonSerializer.Serialize(writer, value.DrawingHelper, newOptions);
-            writer.WriteNumber(nameof(CanvasFacade.AutoComplete), value.AutoComplete);
-            writer.WriteNumber(nameof(CanvasFacade.DeleteRange), value.DeleteRange);
-            writer.WriteNumber(nameof(CanvasFacade.GridDensity), value.GridDensity);
-            writer.WriteNumber(nameof(CanvasFacade.SelectedDrawingStyle), value.SelectedDrawingStyle);
-            writer.WriteNumber(nameof(CanvasFacade.Thickness), value.Thickness);
-            writer.WriteBoolean(nameof(CanvasFacade.ShowGrid), value.ShowGrid);
-            writer.WriteBoolean(nameof(CanvasFacade.SnapToGrid), value.SnapToGrid);
-            writer.WriteBoolean(nameof(CanvasFacade.DeleteMode), value.DeleteMode);
+            writer.WriteNumber("autoComplete", value.AutoComplete);
+            writer.WriteNumber("deleteRange", value.DeleteRange);
+            writer.WriteNumber("gridDensity", value.GridDensity);
+            writer.WriteNumber("selectedDrawingStyle", value.SelectedDrawingStyle);
+            writer.WriteNumber(nameof(CanvasFacade.Thickness).ToLower(), value.Thickness);
+            writer.WriteBoolean("showGrid", value.ShowGrid);
+            writer.WriteBoolean("snapToGrid", value.SnapToGrid);
+            writer.WriteBoolean("deleteMode", value.DeleteMode);
 
             writer.WriteEndObject();
         }

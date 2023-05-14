@@ -32,9 +32,9 @@ namespace CanvasComponentTests
             return await ValueTask.FromResult("");
         }
 
-        public async Task Initialize(IDrawingHelper drawingHelper, Project project, IDrawByStyle drawByStyle, IRoomsCreator roomsCreator)
+        public async Task<bool> Initialize(IDrawingHelper drawingHelper, Project project, IDrawByStyle drawByStyle, IRoomsCreator roomsCreator)
         {
-            await Task.FromResult(true);
+            return await Task.FromResult(true);
         }
 
         public void OnNewRooms(object sender, RoomsEventArgs e)

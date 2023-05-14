@@ -145,9 +145,19 @@
     }
 
 .prompt {
-    
     position: relative;
     padding: 1rem 1rem;
-    
     border: 1px solid transparent;
+}
+
+div.blazored-modal {
+    background: var(--fill-color) !important;
+}
+
+h3.bm-title {
+    color: var(--neutral-foreground-rest) !important;
+}
+
+button.bm-close {
+    color: var(--neutral-foreground-rest) !important;
 }

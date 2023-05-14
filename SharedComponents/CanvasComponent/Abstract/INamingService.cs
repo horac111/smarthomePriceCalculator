@@ -1,5 +1,6 @@
 ﻿using Blazored.Modal;
 using Blazored.Modal.Services;
+using System;
 using System.Threading.Tasks;
 
 namespace CanvasComponent.Abstract
@@ -7,7 +8,7 @@ namespace CanvasComponent.Abstract
     /// <summary>
     /// Shows modal dialog to name given model
     /// </summary>
-    public interface INamingService
+    public interface INamingService : IDisposable
     {
         Task<ModalResult> ShowInputText(INamed toName, string text, ModalPosition position = ModalPosition.BottomLeft);
     }

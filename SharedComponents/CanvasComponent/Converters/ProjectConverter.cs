@@ -30,21 +30,19 @@ namespace CanvasComponent.Converters
                 if (reader.TokenType != JsonTokenType.PropertyName)
                     throw new JsonException("Expected PropertyName token");
 
-                var propName = reader.GetString();
+                var propertyName = reader.GetString().ToLower();
 
-                switch (propName)
+                if (propertyName == nameof(Project.Rooms).ToLower())
+                    rooms = JsonSerializer.Deserialize<List<Room>>(ref reader, newOptions);
+                else if (propertyName == nameof(Project.Name).ToLower())
                 {
-                    case nameof(Project.Rooms):
-                        rooms = JsonSerializer.Deserialize<List<Room>>(ref reader, newOptions);
-                        break;
-                    case nameof(Project.Name):
-                        reader.Read();
-                        name = reader.GetString();
-                        break;
-                    case nameof(Project.Devices):
-                        devices = JsonSerializer.Deserialize<List<ISmartDevice>>(ref reader, newOptions);
-                        break;
-                };
+                    reader.Read();
+                    name = reader.GetString();
+                }
+                else if (propertyName == nameof(Project.Devices).ToLower())
+                    devices = JsonSerializer.Deserialize<List<ISmartDevice>>(ref reader, newOptions);
+                else
+                    throw new FormatException("Unexpected property name");
             }
             return new(rooms, name, devices);
         }
@@ -56,11 +54,11 @@ namespace CanvasComponent.Converters
             newOptions.Converters.Add(new RoomConverter());
             newOptions.Converters.Add(new LineConverter());
             writer.WriteStartObject();
-            writer.WritePropertyName(nameof(Project.Rooms));
+            writer.WritePropertyName(nameof(Project.Rooms).ToLower());
             JsonSerializer.Serialize(writer, value.Rooms, newOptions);
-            writer.WritePropertyName(nameof(Project.Name));
+            writer.WritePropertyName(nameof(Project.Name).ToLower());
             JsonSerializer.Serialize(writer, value.Name, newOptions);
-            writer.WritePropertyName(nameof(Project.Devices));
+            writer.WritePropertyName(nameof(Project.Devices).ToLower());
             JsonSerializer.Serialize(writer, value.Devices, newOptions);
             writer.WriteEndObject();
         }

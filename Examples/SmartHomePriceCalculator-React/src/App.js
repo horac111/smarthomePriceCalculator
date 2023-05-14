@@ -17,13 +17,15 @@ function App() {
           const canvasContainer = document.querySelector("#CanvasContainer");
           if (canvasContainer) {
             const rect = canvasContainer.getBoundingClientRect();
-            setCanvasFacade({
-              ...canvasFacade,
-              DrawingHelper: {
-                Top: rect.top,
-                Left: rect.left,
-                Width: rect.width,
-                Height: rect.height
+            setcanvasFacade({
+              canvasFacade: {
+                ...canvasFacade.canvasFacade,
+                DrawingHelper: {
+                  Top: rect.top,
+                  Left: rect.left,
+                  Width: rect.width,
+                  Height: rect.height
+                }
               }
             });
           }
@@ -33,12 +35,13 @@ function App() {
 
 
   });
-  const [canvasFacade, setCanvasFacade] = useState(facade);
-  console.log(canvasFacade);
+  const [canvasFacade, setcanvasFacade] = useState({ canvasFacade: facade });
   function changeRadioButton(changeEvent) {
-    setCanvasFacade({
-      ...canvasFacade,
-      SelectedDrawingStyle: parseInt(changeEvent.target.value)
+    setcanvasFacade({
+      canvasFacade: {
+        ...canvasFacade.canvasFacade,
+        selectedDrawingStyle: parseInt(changeEvent.target.value)
+      }
     })
   }
   return (
@@ -51,85 +54,99 @@ function App() {
           {showSidebar ? (
             <div className="w-25 z-1 pl-3 position-absolute bg-warning">
               <div className="mt-5 m-2 d-flex flex-column">
-                {canvasFacade.DrawingTypes.map(x =>
+                {canvasFacade.canvasFacade.drawingTypes.map(x =>
                   <div className="radio align-content-start d-flex">
                     <label className="justify-content-center d-flex">
-                      <input type="radio" key={x.Value} onChange={(eventChange) => changeRadioButton(eventChange)} value={x.Value} checked={x.Value === canvasFacade.SelectedDrawingStyle} />
-                      <label>&nbsp;{x.Name}</label>
+                      <input type="radio" key={x.value} onChange={(eventChange) => changeRadioButton(eventChange)} value={x.value} checked={x.value === canvasFacade.canvasFacade.selectedDrawingStyle} />
+                      <label>&nbsp;{x.name}</label>
                     </label>
                   </div>)}
                 <label className="align-content-start d-flex flex-column">
                   <label className="align-self-start">Grid density: </label>
-                  <input type="number" onInput={changeEvent => setCanvasFacade({
-                    ...canvasFacade,
-                    GridDensity: changeEvent.target.value ?? 1
-                  })} min="1" step="1" required={true} value={canvasFacade.GridDensity} />
+                  <input type="number" onInput={changeEvent => setcanvasFacade({
+                    canvasFacade: {
+                      ...canvasFacade.canvasFacade,
+                      gridDensity: changeEvent.target.value ?? 1
+                    }
+                  })} min="1" step="1" required={true} value={canvasFacade.canvasFacade.gridDensity} />
                 </label>
 
                 <label className="align-content-start d-flex">
-                  <input type="checkbox" onChange={changeEvent => setCanvasFacade({
-                    ...canvasFacade,
-                    ShowGrid: !canvasFacade.ShowGrid
-                  })} checked={canvasFacade.ShowGrid} /> &nbsp;
+                  <input type="checkbox" onChange={changeEvent => setcanvasFacade({
+                    canvasFacade: {
+                      ...canvasFacade.canvasFacade,
+                      showGrid: !canvasFacade.canvasFacade.showGrid
+                    }
+                  })} checked={canvasFacade.canvasFacade.showGrid} /> &nbsp;
                   Is grid visible
                 </label>
 
                 <label className="align-content-start d-flex">
-                  <input type="checkbox" onChange={changeEvent => setCanvasFacade({
-                    ...canvasFacade,
-                    SnapToGrid: !canvasFacade.SnapToGrid
-                  })} checked={canvasFacade.SnapToGrid} /> &nbsp;
+                  <input type="checkbox" onChange={changeEvent => setcanvasFacade({
+                    canvasFacade: {
+                      ...canvasFacade.canvasFacade,
+                      snapToGrid: !canvasFacade.canvasFacade.snapToGrid
+                    }
+                  })} checked={canvasFacade.canvasFacade.snapToGrid} /> &nbsp;
                   Snap to grid
                 </label>
 
                 <label className="align-content-start d-flex flex-column">
                   <label className="align-self-start">Pixels to close room: </label>
-                  <input type="number" onInput={changeEvent => setCanvasFacade({
-                    ...canvasFacade,
-                    AutoComplete: changeEvent.target.value ?? 0
-                  })} min="0" step="0.25" required={true} value={canvasFacade.AutoComplete} />
+                  <input type="number" onInput={changeEvent => setcanvasFacade({
+                    canvasFacade: {
+                      ...canvasFacade.canvasFacade,
+                      autoComplete: changeEvent.target.value ?? 0
+                    }
+                  })} min="0" step="0.25" required={true} value={canvasFacade.autoComplete} />
                 </label>
 
                 <label className="align-content-start d-flex flex-column">
                   <label className="align-self-start">Line thickness: </label>
-                  <input type="number" onInput={changeEvent => setCanvasFacade({
-                    ...canvasFacade,
-                    Thickness: changeEvent.target.value ?? 1
-                  })} min="1" step="0.25" required={true} value={canvasFacade.Thickness} />
+                  <input type="number" onInput={changeEvent => setcanvasFacade({
+                    canvasFacade: {
+                      ...canvasFacade.canvasFacade,
+                      thickness: changeEvent.target.value ?? 1
+                    }
+                  })} min="1" step="0.25" required={true} value={canvasFacade.canvasFacade.thickness} />
                 </label>
 
                 <label className="justify-content-start d-flex">
-                  <input type="checkbox" onChange={changeEvent => setCanvasFacade({
-                    ...canvasFacade,
-                    DeleteMode: !canvasFacade.DeleteMode
-                  })} checked={canvasFacade.DeleteMode} /> &nbsp;
+                  <input type="checkbox" onChange={changeEvent => setcanvasFacade({
+                    canvasFacade: {
+                      ...canvasFacade.canvasFacade,
+                      deleteMode: !canvasFacade.canvasFacade.deleteMode
+                    }
+                  })} checked={canvasFacade.canvasFacade.deleteMode} /> &nbsp;
                   Delete Mode
                 </label>
 
                 <label className="align-items-start d-flex flex-column">
                   <label className="align-self-start">Delete Range: </label>
-                  <input type="number" onInput={changeEvent => setCanvasFacade({
-                    ...canvasFacade,
-                    DeleteRange: changeEvent.target.value ?? 0
-                  })} min="0" step="0.25" required={true} value={canvasFacade.DeleteRange} />
+                  <input type="number" onInput={changeEvent => setcanvasFacade({
+                    canvasFacade: {
+                      ...canvasFacade.canvasFacade,
+                      deleteRange: changeEvent.target.value ?? 0
+                    }
+                  })} min="0" step="0.25" required={true} value={canvasFacade.canvasFacade.deleteRange} />
                 </label>
               </div>
             </div>
           ) : null
           }
           <div className="w-75 mr-1">
-            {shouldRenderCanvas ? <CanvasContainer facadeWrapper={{ CanvasFacade: canvasFacade }} /> : null}
+            {shouldRenderCanvas ? <CanvasContainer facadeWrapper={canvasFacade} facadeWrapperChanged={wrapper => setcanvasFacade(wrapper)} /> : null}
           </div>
 
 
-          <div className="w-25 mr-1">
+          <div className="w-25 mr-1 fs-5">
             <h5 className="justify-self-center align-self-center">Selected devices:</h5>
             {
-              canvasFacade.DevicePrices.map(x =>
+              canvasFacade.canvasFacade.devicePrices.map(x =>
                 <div className="d-flex flex-row w-100">
-                  <label className="flex-fill w-0">{x.Count + "X"}</label>
-                  <label className="flex-fill w-0">{x.Name}</label>
-                  <label className="flex-fill w-0 d-flex justify-content-end">{x.Price + "$"}</label>
+                  <label className="flex-fill w-0">{x.count + "X"}</label>
+                  <label className="flex-fill w-0">{x.name}</label>
+                  <label className="flex-fill w-0 d-flex justify-content-end">{x.price + "$"}</label>
                 </div>
               )
 
