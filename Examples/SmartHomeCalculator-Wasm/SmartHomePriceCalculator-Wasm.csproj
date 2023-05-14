@@ -4,6 +4,7 @@
     <TargetFramework>net7.0</TargetFramework>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>disable</Nullable>
     <RootNamespace>SmartHomePriceCalculatorWasm</RootNamespace>
     <IsPackable>true</IsPackable>
   </PropertyGroup>
@@ -23,7 +24,6 @@
 
   <ItemGroup>
     <PackageReference Include="Blazored.Modal" Version="7.1.0" />
-    <PackageReference Include="bootstrap" Version="5.2.3" />
     <PackageReference Include="Microsoft.AspNetCore.Components.CustomElements" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Components.Web" Version="7.0.5" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="7.0.5" />

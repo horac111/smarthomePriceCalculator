@@ -13,10 +13,4 @@
     <Compile Include="..\JSComponentGeneration.Shared\CasingUtilities.cs" Link="Shared\CasingUtilities.cs" />
   </ItemGroup>
 
-  <ItemGroup>
-    <None Update="idea.png">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </None>
-  </ItemGroup>
-
 </Project>
