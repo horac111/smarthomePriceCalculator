@@ -53,6 +53,8 @@ namespace CanvasComponent.Converters
             newOptions.Converters.Add(new ISmartDeviceConverter());
             newOptions.Converters.Add(new RoomConverter());
             newOptions.Converters.Add(new LineConverter());
+            newOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+
             writer.WriteStartObject();
             writer.WritePropertyName(nameof(Project.Rooms).ToLower());
             JsonSerializer.Serialize(writer, value.Rooms, newOptions);
