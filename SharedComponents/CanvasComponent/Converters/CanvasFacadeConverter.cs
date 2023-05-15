@@ -23,7 +23,6 @@ namespace CanvasComponent.Converters
             newOptions.Converters.Add(new INamedValueConverter());
             newOptions.Converters.Add(new IDrawingHelperConverter());
             newOptions.Converters.Add(new DevicePriceItemConverter());
-            newOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
 
             CanvasFacade facade = new();
 
@@ -85,6 +84,8 @@ namespace CanvasComponent.Converters
             newOptions.Converters.Add(new IDrawingHelperConverter());
             newOptions.Converters.Add(new INamedValueConverter());
             newOptions.Converters.Add(new DevicePriceItemConverter());
+            newOptions.PropertyNamingPolicy = JsonNamingPolicy.CamelCase;
+
             writer.WriteStartObject();
             writer.WritePropertyName(nameof(CanvasFacade.Project).ToLower());
             JsonSerializer.Serialize(writer, value.Project, newOptions);
