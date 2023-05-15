@@ -17,6 +17,8 @@ namespace CanvasComponent.Converters
             reader.Read();
             reader.Read();
             var deviceType = reader.GetInt32();
+            if (deviceType is < 0 or > 3)
+                throw new FormatException("Unknown device type");
             reader.Read();
             reader.Read();
             ISmartDevice device = deviceType switch
