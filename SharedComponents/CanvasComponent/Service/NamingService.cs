@@ -32,7 +32,7 @@ namespace CanvasComponent.Service
             cts.Dispose();
         }
 
-        public async Task<ModalResult> ShowInputText(INamed toName, string text,
+        public async Task<ModalResult> ShowInputText(INamed toName, string header, string text,
             ModalPosition position = ModalPosition.BottomLeft)
         {
             ModalParameters param = new()
@@ -54,7 +54,7 @@ namespace CanvasComponent.Service
             var show = Task.Run(async () =>
             {
                 cts.Token.ThrowIfCancellationRequested();
-                inputText = modal.Show<InputText>("Naming room.", param, options);
+                inputText = modal.Show<InputText>(header, param, options);
                 result = await inputText.Result;
                 await js.InvokeVoidAsync("eval", $"document.getElementById(\"{CanvasFacade.CanvasID}\").focus();");
             }, cts.Token);

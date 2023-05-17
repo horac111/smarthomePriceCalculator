@@ -23,6 +23,9 @@ namespace SmartHomeCalculator
         public static void Main(string[] args)
         {
             var builder = WebApplication.CreateBuilder(args);
+            builder.WebHost.UseKestrel();
+            builder.WebHost.UseIIS();
+
             StaticWebAssetsLoader.UseStaticWebAssets(builder.Environment, builder.Configuration);
 
             var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "img");

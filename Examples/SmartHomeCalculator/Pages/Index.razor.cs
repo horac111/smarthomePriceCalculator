@@ -15,14 +15,6 @@ namespace SmartHomeCalculator.Pages
 
         protected override void OnInitialized()
         {
-            CanvasFacade.PropertyChanged += (s, e) => InvokeAsync(StateHasChanged);
-            JsonSerializerOptions options = new JsonSerializerOptions()
-            {
-                 WriteIndented = true
-            };
-            options.Converters.Add(new CanvasFacadeConverter());
-            CanvasFacade.DrawingHelper = new DrawingHelper(0, 0, 0, 0);
-            var a = JsonSerializer.Serialize(CanvasFacade, options);
             base.OnInitialized();
         }
     }

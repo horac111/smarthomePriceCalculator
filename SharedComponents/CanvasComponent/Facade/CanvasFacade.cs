@@ -255,7 +255,7 @@ namespace CanvasComponent.Facade
                     Project.Initialize(DrawingHelper);
 
                     if (string.IsNullOrEmpty(Project.Name) && namingService is not null)
-                        await namingService.ShowInputText(Project, "Project name:", ModalPosition.Middle);
+                        await namingService.ShowInputText(Project, "Naming project.", "Project name:", ModalPosition.Middle);
                 }
                 await drawing.Draw(0);
             }
@@ -269,7 +269,7 @@ namespace CanvasComponent.Facade
         /// <param name="e"></param>
         /// <returns></returns>
         private async Task OnNewRoom(object sender, NewRoomEventArgs e)
-            => await namingService.ShowInputText(e.Room, "Room name:");
+            => await namingService.ShowInputText(e.Room, "Naming room.", "Room name:");
 
         /// <summary>
         /// Method reacts to event Draw

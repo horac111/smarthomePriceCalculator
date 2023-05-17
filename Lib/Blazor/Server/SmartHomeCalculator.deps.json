@@ -1,12 +1,12 @@
 {
   "runtimeTarget": {
-    "name": ".NETCoreApp,Version=v7.0/win-x86",
+    "name": ".NETCoreApp,Version=v7.0/win-x64",
     "signature": ""
   },
   "compilationOptions": {},
   "targets": {
     ".NETCoreApp,Version=v7.0": {},
-    ".NETCoreApp,Version=v7.0/win-x86": {
+    ".NETCoreApp,Version=v7.0/win-x64": {
       "SmartHomeCalculator/1.0.0": {
         "dependencies": {
           "Blazored.Modal": "7.1.0",
@@ -15,14 +15,14 @@
           "Microsoft.AspNetCore.Components.CustomElements": "7.0.5",
           "Microsoft.Fast.Components.FluentUI": "2.1.4",
           "bootstrap": "5.2.3",
-          "runtimepack.Microsoft.NETCore.App.Runtime.win-x86": "7.0.5",
-          "runtimepack.Microsoft.AspNetCore.App.Runtime.win-x86": "7.0.5"
+          "runtimepack.Microsoft.NETCore.App.Runtime.win-x64": "7.0.5",
+          "runtimepack.Microsoft.AspNetCore.App.Runtime.win-x64": "7.0.5"
         },
         "runtime": {
           "SmartHomeCalculator.dll": {}
         }
       },
-      "runtimepack.Microsoft.NETCore.App.Runtime.win-x86/7.0.5": {
+      "runtimepack.Microsoft.NETCore.App.Runtime.win-x64/7.0.5": {
         "runtime": {
           "Microsoft.CSharp.dll": {
             "assemblyVersion": "7.0.0.0",
@@ -698,7 +698,7 @@
           }
         },
         "native": {
-          "Microsoft.DiaSymReader.Native.x86.dll": {
+          "Microsoft.DiaSymReader.Native.amd64.dll": {
             "fileVersion": "14.29.30148.0"
           },
           "System.IO.Compression.Native.dll": {
@@ -728,7 +728,7 @@
           "mscordaccore.dll": {
             "fileVersion": "7.0.523.17405"
           },
-          "mscordaccore_x86_x86_7.0.523.17405.dll": {
+          "mscordaccore_amd64_amd64_7.0.523.17405.dll": {
             "fileVersion": "7.0.523.17405"
           },
           "mscordbi.dll": {
@@ -742,7 +742,7 @@
           }
         }
       },
-      "runtimepack.Microsoft.AspNetCore.App.Runtime.win-x86/7.0.5": {
+      "runtimepack.Microsoft.AspNetCore.App.Runtime.win-x64/7.0.5": {
         "runtime": {
           "Microsoft.AspNetCore.Antiforgery.dll": {
             "assemblyVersion": "7.0.0.0",
@@ -1477,12 +1477,12 @@
       "serviceable": false,
       "sha512": ""
     },
-    "runtimepack.Microsoft.NETCore.App.Runtime.win-x86/7.0.5": {
+    "runtimepack.Microsoft.NETCore.App.Runtime.win-x64/7.0.5": {
       "type": "runtimepack",
       "serviceable": false,
       "sha512": ""
     },
-    "runtimepack.Microsoft.AspNetCore.App.Runtime.win-x86/7.0.5": {
+    "runtimepack.Microsoft.AspNetCore.App.Runtime.win-x64/7.0.5": {
       "type": "runtimepack",
       "serviceable": false,
       "sha512": ""
@@ -1695,126 +1695,126 @@
     }
   },
   "runtimes": {
-    "win-x86": [
+    "win-x64": [
       "win",
       "any",
       "base"
     ],
-    "win-x86-aot": [
+    "win-x64-aot": [
       "win-aot",
-      "win-x86",
+      "win-x64",
       "win",
       "aot",
       "any",
       "base"
     ],
-    "win10-x86": [
+    "win10-x64": [
       "win10",
-      "win81-x86",
+      "win81-x64",
       "win81",
-      "win8-x86",
+      "win8-x64",
       "win8",
-      "win7-x86",
+      "win7-x64",
       "win7",
-      "win-x86",
+      "win-x64",
       "win",
       "any",
       "base"
     ],
-    "win10-x86-aot": [
+    "win10-x64-aot": [
       "win10-aot",
-      "win10-x86",
+      "win10-x64",
       "win10",
-      "win81-x86-aot",
+      "win81-x64-aot",
       "win81-aot",
-      "win81-x86",
+      "win81-x64",
       "win81",
-      "win8-x86-aot",
+      "win8-x64-aot",
       "win8-aot",
-      "win8-x86",
+      "win8-x64",
       "win8",
-      "win7-x86-aot",
+      "win7-x64-aot",
       "win7-aot",
-      "win7-x86",
+      "win7-x64",
       "win7",
-      "win-x86-aot",
+      "win-x64-aot",
       "win-aot",
-      "win-x86",
+      "win-x64",
       "win",
       "aot",
       "any",
       "base"
     ],
-    "win7-x86": [
+    "win7-x64": [
       "win7",
-      "win-x86",
+      "win-x64",
       "win",
       "any",
       "base"
     ],
-    "win7-x86-aot": [
+    "win7-x64-aot": [
       "win7-aot",
-      "win7-x86",
+      "win7-x64",
       "win7",
-      "win-x86-aot",
+      "win-x64-aot",
       "win-aot",
-      "win-x86",
+      "win-x64",
       "win",
       "aot",
       "any",
       "base"
     ],
-    "win8-x86": [
+    "win8-x64": [
       "win8",
-      "win7-x86",
+      "win7-x64",
       "win7",
-      "win-x86",
+      "win-x64",
       "win",
       "any",
       "base"
     ],
-    "win8-x86-aot": [
+    "win8-x64-aot": [
       "win8-aot",
-      "win8-x86",
+      "win8-x64",
       "win8",
-      "win7-x86-aot",
+      "win7-x64-aot",
       "win7-aot",
-      "win7-x86",
+      "win7-x64",
       "win7",
-      "win-x86-aot",
+      "win-x64-aot",
       "win-aot",
-      "win-x86",
+      "win-x64",
       "win",
       "aot",
       "any",
       "base"
     ],
-    "win81-x86": [
+    "win81-x64": [
       "win81",
-      "win8-x86",
+      "win8-x64",
       "win8",
-      "win7-x86",
+      "win7-x64",
       "win7",
-      "win-x86",
+      "win-x64",
       "win",
       "any",
       "base"
     ],
-    "win81-x86-aot": [
+    "win81-x64-aot": [
       "win81-aot",
-      "win81-x86",
+      "win81-x64",
       "win81",
-      "win8-x86-aot",
+      "win8-x64-aot",
       "win8-aot",
-      "win8-x86",
+      "win8-x64",
       "win8",
-      "win7-x86-aot",
+      "win7-x64-aot",
       "win7-aot",
-      "win7-x86",
+      "win7-x64",
       "win7",
-      "win-x86-aot",
+      "win-x64-aot",
       "win-aot",
-      "win-x86",
+      "win-x64",
       "win",
       "aot",
       "any",

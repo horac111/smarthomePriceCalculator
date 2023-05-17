@@ -2,29 +2,29 @@
 @import '_content/Microsoft.Fast.Components.FluentUI/Microsoft.Fast.Components.FluentUI.bundle.scp.css';
 
 /* /Pages/Index.razor.rz.scp.css */
-fluent-card[b-oedjncnytu] {
+fluent-card[b-e0pqfipfxy] {
     --card-height: 400px;
     --card-width: 500px;
     padding: 20px;
     margin: 12px;
 }
 
-.class-override[b-oedjncnytu] {
+.class-override[b-e0pqfipfxy] {
     height: 163px;
     width: 300px;
 }
 
-.state-override[b-oedjncnytu] {
+.state-override[b-e0pqfipfxy] {
     --card-width: 350px;
     --card-height: 300px;
     --elevation: 6;
 }
 
-    .state-override:hover[b-oedjncnytu] {
+    .state-override:hover[b-e0pqfipfxy] {
         --elevation: 12;
     }
 
-.contents[b-oedjncnytu] {
+.contents[b-e0pqfipfxy] {
     display: flex;
     flex-direction: column;
 }

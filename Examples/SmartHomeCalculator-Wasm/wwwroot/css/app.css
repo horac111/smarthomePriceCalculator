@@ -4,6 +4,18 @@
     font-size: var(--type-ramp-base-font-size);
     line-height: var(--type-ramp-base-line-height);
     margin: 0;
+    height: 100%;
+    width: 100%;
+    display: flex !important;
+}
+
+html {
+    height: 100%;
+    width: 100%;
+}
+
+:host {
+    display: flex !important;
 }
 
 .container {
@@ -42,6 +54,8 @@
     grid-template-areas:
         "navigation content";
     grid-area: main;
+    height: 100%;
+    width: 100%;
 }
 
 .navigation {

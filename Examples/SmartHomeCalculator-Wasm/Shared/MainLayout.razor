@@ -2,22 +2,20 @@
 
 <PageTitle>Client</PageTitle>
 
-<div class="container">
-        <div class="main">
-            <div class="content">
-                <main>
-                    <article class="content px-4">
-                       
-                        <ErrorBoundary>
-                            <ChildContent>
-                                @Body
-                            </ChildContent>
-                            <ErrorContent Context="ex">
-                                 <p class="error">@ex.Message</p>
-                            </ErrorContent>
-                        </ErrorBoundary>
-                    </article>
-                </main>
+<div class="d-flex flex-column h-100 w-100">
+    <div class=" h-100 w-100">
+        <div class=" h-100 w-100">
+            <div class=" h-100 w-100">
+
+                <ErrorBoundary>
+                    <ChildContent>
+                        @Body
+                    </ChildContent>
+                    <ErrorContent Context="ex">
+                        <p class="error">@ex.Message</p>
+                    </ErrorContent>
+                </ErrorBoundary>
             </div>
         </div>
     </div>
+</div>

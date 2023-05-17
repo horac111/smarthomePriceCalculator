@@ -10,6 +10,6 @@ namespace CanvasComponent.Abstract
     /// </summary>
     public interface INamingService : IDisposable
     {
-        Task<ModalResult> ShowInputText(INamed toName, string text, ModalPosition position = ModalPosition.BottomLeft);
+        Task<ModalResult> ShowInputText(INamed toName, string header, string text, ModalPosition position = ModalPosition.BottomLeft);
     }
 }

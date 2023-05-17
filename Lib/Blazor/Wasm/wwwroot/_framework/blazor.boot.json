@@ -9,7 +9,7 @@
     "assembly": {
       "Blazor.Canvas.dll": "sha256-MgW7sRx5cXMWt+X2Qtv4JzmDnscBJiv0NL0QFlNM+XA=",
       "Blazored.Modal.dll": "sha256-Sr30UiM7JErBe8hojY6HAgaOOgfQE5zHijI0uVypmkM=",
-      "CanvasComponent.dll": "sha256-CVlc12QqTz22lvrTfAXIE2Z7jyH0F0BoNI77ZllzyOw=",
+      "CanvasComponent.dll": "sha256-X3\/zu3UuFkDq71WHBe12YPJZCbX\/pxzHEPaBnqZvJMg=",
       "Excubo.Generators.Blazor.Attributes.dll": "sha256-75nwKqjSjUMKOIEEcAmYc0nkwq3vAL5JKzIYoVi2X6w=",
       "JSComponentGeneration.dll": "sha256-o43U+tq1Nl2GqzB1q2WU7seudxckbMnVvfhP32EVnAU=",
       "Microsoft.AspNetCore.Components.CustomElements.dll": "sha256-M0qvj7P84ai\/tcBj91sRe8\/1Tgu4FzZfoLq7Ffchh8A=",
@@ -27,11 +27,11 @@
       "Microsoft.Extensions.Logging.dll": "sha256-9ADq8ceLn0mI8UX3SIGa2p\/MsBQgrR92RcdfytcasaY=",
       "Microsoft.Extensions.Options.dll": "sha256-tqwN9VHoUNgwwsnVSzuNiEoFU5BD+IwUTM7TR9wdcCw=",
       "Microsoft.Extensions.Primitives.dll": "sha256-eXvGx2jcjpTPEJoAHBsW\/VuMPbNyyU+AsuhPmkzSSRY=",
-      "Microsoft.Fast.Components.FluentUI.dll": "sha256-W6e\/BSI8hKsUzrQpcnFRa7dVCrofqbhGQAaBgBFAHcU=",
+      "Microsoft.Fast.Components.FluentUI.dll": "sha256-kO9LdnY2xlluwNmmvG3YXaf3GTJZVAXqEltkVl1tOcU=",
       "Microsoft.JSInterop.dll": "sha256-lAWu8qcrrVCAd7bB5sm4eYuBr+tSB3zjOYl\/V2\/v4Vs=",
       "Microsoft.JSInterop.WebAssembly.dll": "sha256-Awf7wv9O8IMhKfPgck20vnr8m17qkGi5wsUfHhliPCQ=",
       "netstandard.dll": "sha256-LOnVHCA0ZiLBlL0kiVp+O0FbnpXtHHZB82c+2sfBZ6Q=",
-      "SmartHomePriceCalculator-Wasm.dll": "sha256-le3rP7g95YDPMkZG1fWdVhiIcqQpAwKpWNSEheH9VK0=",
+      "SmartHomePriceCalculator-Wasm.dll": "sha256-HFXxDXDiUqxp78NFyfs5OmLZy5sEseHcpAcz4Ahvk3I=",
       "System.Collections.Concurrent.dll": "sha256-cjUqj8gjlPWsLO9uDJaTOnVh0N\/QOgK8\/BXHgGL+uLU=",
       "System.Collections.dll": "sha256-oED5pz8fngsJKCXJCxpFAl6UOOYDgB3Jq6r7YtJGEWk=",
       "System.Collections.NonGeneric.dll": "sha256-323vVmHkfEce3tJHq51AhnUAkRPd6PPZNFtl9stzl04=",
@@ -67,7 +67,7 @@
     "runtime": {
       "dotnet.7.0.5.dwzaimr23e.js": "sha256-j900sSlhRvTANvEqk0XnG496u57fB\/wypxz\/KbwXDXY=",
       "dotnet.timezones.blat": "sha256-rIVQOJ+gHn4DeRSq6Ac3CURS8YBJG3P4CtYPfIuZ\/kk=",
-      "dotnet.wasm": "sha256-YU3b1wjpgquM+hp9CQ4YYvI3EkHOl5UX57SeG\/rVQwY=",
+      "dotnet.wasm": "sha256-YOLEmhLaKDHqDOsdokZ9oC5SRswqVZFHcc3NfU+w5kY=",
       "icudt.dat": "sha256-tO5O5YzMTVSaKBboxAqezOQL9ewmupzV2JrB5Rkc8a4=",
       "icudt_CJK.dat": "sha256-SZLtQnRc0JkwqHab0VUVP7T3uBPSeYzxzDnpxPpUnHk=",
       "icudt_EFIGS.dat": "sha256-8fItetYY8kQ0ww6oxwTLiT3oXlBwHKumbeP2pRF4yTc=",
@@ -76,7 +76,7 @@
     "runtimeAssets": {
       "dotnet.wasm": {
         "behavior": "dotnetwasm",
-        "hash": "sha256-YU3b1wjpgquM+hp9CQ4YYvI3EkHOl5UX57SeG\/rVQwY="
+        "hash": "sha256-YOLEmhLaKDHqDOsdokZ9oC5SRswqVZFHcc3NfU+w5kY="
       }
     },
     "satelliteResources": null
