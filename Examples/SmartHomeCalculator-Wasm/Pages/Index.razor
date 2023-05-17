@@ -1,4 +1,77 @@
 ﻿@page "/"
 
 
-<Canvas Facade="CanvasFacade" />
+<div class="wrapper w-100 h-100" Appearance="Appearance.Filled" tabindex="0" @onkeydown="@CanvasFacade.OnKeyDown">
+    <div class="content w-100 h-100 m-0 p-0">
+        <div class="d-flex flex-column w-100 h-100">
+            <div class="d-flex flex-row m-0 flex-fill">
+                <FluentButton Appearance="Appearance.Neutral" Class="z-2 m-2 position-absolute" @onclick="() => showSidebar ^= true">
+                    @if (showSidebar)
+                    {
+                        <FluentIcon Name="@FluentIcons.ArrowLeft" Size="@IconSize.Size24" Variant="@IconVariant.Filled" Color="@Color.Accent" />
+                    }
+                    else
+                    {
+                        <FluentIcon Name="@FluentIcons.ArrowRight" Size="@IconSize.Size24" Variant="@IconVariant.Filled" Color="@Color.Accent" />
+                    }
+                </FluentButton>
+                @if (showSidebar)
+                {
+                    <FluentCard Appearance="Appearance.Lightweight" Orientation="Orientation.Vertical" Class="w-25 z-1 pl-3 h-75 position-absolute">
+
+                        <Stack Orientation="Orientation.Vertical" Class="mt-5 m-1">
+                            <FluentRadioGroup Appearance="@Appearance.Outline" Required="true" Orientation="Orientation.Vertical" @bind-Value="CanvasFacade.SelectedDrawingStyle">
+                                @foreach (var val in CanvasFacade.DrawingTypes)
+                                {
+                                    <FluentRadio Value="@val.Value">@val.Name</FluentRadio>
+                                }
+                            </FluentRadioGroup>
+                            <FluentDivider Appearance="Appearance.Accent" />
+                            <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.GridDensity" Min="1"
+                                           Step="1" Required="true">Grid density:</FluentNumberField>
+
+                            <FluentCheckbox Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.ShowGrid">Is grid visible</FluentCheckbox>
+
+                            <FluentCheckbox Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.SnapToGrid">Snap to grid</FluentCheckbox>
+
+                            <FluentDivider Appearance="Appearance.Accent" />
+
+                            <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.AutoComplete" Min="0"
+                                           Step="0.25" Required="true">Pixels to close room:</FluentNumberField>
+
+                            <FluentDivider Appearance="Appearance.Accent" />
+
+                            <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.Thickness" Min="0.25"
+                                           Step="0.25" Required="true">Line thickness:</FluentNumberField>
+
+                            <FluentSwitch Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.DeleteMode"
+                                      Required="true">Delete Mode:</FluentSwitch>
+
+                            <FluentNumberField Appearance="Appearance.Outline" @bind-Value="@CanvasFacade.DeleteRange" Min="0.25"
+                                           Step="0.25" Required="true">Delete Range:</FluentNumberField>
+                        </Stack>
+                    </FluentCard>
+                }
+                <div class="w-75 mr-1">
+                    <Canvas Facade="@CanvasFacade" />
+                </div>
+
+
+                <FluentCard Orientation="Orientation.Vertical" Class="w-25">
+                    <Stack Orientation="Orientation.Vertical">
+                        <h5 class="justify-self-center align-self-center">Selected devices:</h5>
+                        @foreach (var devicePrice in CanvasFacade.DevicePrices)
+                        {
+                            <div class="d-flex flex-row w-100">
+                                <label class="flex-grow-1">@(devicePrice.Count)X</label>
+                                <label class="flex-grow-1">@devicePrice.Name</label>
+                                <label>@(devicePrice.Price)$</label>
+                            </div>
+                        }
+                    </Stack>
+                </FluentCard>
+
+            </div>
+        </div>
+    </div>
+</div>

@@ -18,6 +18,37 @@ html {
     display: flex !important;
 }
 
+fluent-design-system-provider {
+    height: 100%;
+    width: 100%;
+    margin: 0px;
+    padding: 0px;
+}
+
+.z-1 {
+    z-index: 1;
+}
+
+.z-2 {
+    z-index: 2;
+}
+
+div.blazored-modal {
+    background: var(--fill-color) !important;
+}
+
+h3.bm-title {
+    color: var(--neutral-foreground-rest) !important;
+}
+
+button.bm-close {
+    color: var(--neutral-foreground-rest) !important;
+}
+
+.border-accent {
+    border: 1px solid var(--accent-fill-rest) !important;
+}
+
 .container {
     display: grid;
     grid-template-columns: 1fr;

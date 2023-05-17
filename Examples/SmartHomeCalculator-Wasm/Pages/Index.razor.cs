@@ -12,5 +12,8 @@ namespace SmartHomePriceCalculatorWasm.Pages
     {
         [Inject]
         public CanvasFacade CanvasFacade { get; set; }
+
+        bool showSidebar = true;
+
     }
 }
